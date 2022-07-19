@@ -1,0 +1,15 @@
+svg {
+    width: 400px;
+    height: 200px;
+}
+
+.measure { }
+    .measure g {
+        transform: translate(50%, 100%) rotate(90deg);
+    }
+    .measure path {
+        fill: #00000044;
+    }
+        .measure path:first-child {
+            fill: #ff0000;
+        }
