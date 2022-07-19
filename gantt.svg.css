@@ -1,0 +1,25 @@
+text {
+    alignment-baseline: before-edge;
+}
+
+.implementation {
+    fill: #ef8677;
+}
+.development {
+    fill: #82b6d9;
+}
+.process {
+    fill: #a0e77d;
+}
+.workflow {
+    fill: #efe777;
+}
+.integration {
+    fill: #82d9d3;
+}
+.automation {
+    fill: #c982d9;
+}
+.analytics {
+    fill: gray;
+}

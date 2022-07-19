@@ -1,0 +1,76 @@
+* {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+html, body {
+    background: #eee;
+    display: flex;
+    flex-grow: 1;
+    height: 100vh;
+    margin: 0;
+    overflow-y: hidden;
+    padding: 0;
+}
+
+button {
+    cursor: pointer;
+}
+
+aside {
+    background: #587ba4;
+    cursor: default;
+    height: 100vh;
+    padding: 1rem;
+    user-select: none;
+    width: 20rem;
+}
+
+    aside ul {
+        list-style: none;
+        margin: 0 0 1rem 0;
+        padding: 0;
+    }
+        aside ul li {
+            color: #fff;
+            margin: 0.5rem 0;
+        }
+
+            [data-index='1'] aside ul li[data-index='1'],
+            [data-index='2'] aside ul li[data-index='2'],
+            [data-index='3'] aside ul li[data-index='3'],
+            [data-index='4'] aside ul li[data-index='4'] {
+                font-weight: bold;
+            }
+
+    aside button {
+        width: 50%;
+    }
+
+    [data-index='1'] #previous,
+    [data-index='4'] #next {
+        color: gray;
+        pointer-events: none;
+    }
+
+main {
+    flex-grow: 1;
+    margin-top: 0;
+    padding: 1rem;
+    transition: ease 1s;
+}
+    main > section {
+        height: 100vh;
+    }
+    [data-index='1'] main {
+        margin-top: 0;
+    }
+    [data-index='2'] main {
+        margin-top: -100vh;
+    }
+    [data-index='3'] main {
+        margin-top: -200vh;
+    }
+    [data-index='4'] main {
+        margin-top: -300vh;
+    }
