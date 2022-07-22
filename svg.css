@@ -1,7 +1,37 @@
-svg {
-    width: 400px;
-    height: 200px;
+/* svg {
+    width: 100%;
+    max-height: 100vh;
+} */
+
+.scatterplot {
+    font-size: 8px;
+    width: 600px;
+    height: 400px;
+    border: solid;
 }
+    .scatterplot circle {
+        r: 1%;
+        fill: transparent;
+        stroke: gray;
+    }
+        .scatterplot circle.target {
+            stroke: red;
+        }
+
+    .scatterplot text {
+        font-size: 8px;
+    }
+
+    .scatterplot text.axis-label {
+        fill: gray;
+        text-anchor: middle;
+    }
+    .scatterplot text.title {
+        text-anchor: middle;
+        font-size: 1.2em;
+        font-weight: bold;
+        fill: gray;
+    }
 
 .measure { }
     .measure g {
