@@ -1,5 +1,5 @@
 const frequency = { 'Monthly': 12, 'Weekly': 52, 'Yearly': 1 }
-const dim = {
+const defaultLayout = {
     height: 200,
     width: 300,
     marginBottom: 40,
@@ -11,8 +11,7 @@ const dim = {
 let sectionIndex = 0
 let fullData = []
 let filteredData = []
-
-let xScale, yScale, xAxis, yAxis, xAxisGroup, yAxisGroup, plot
+let scatterplot
 
 function cleanDataRow(row) {
     let usdTotalComp = parseInt(row.ConvertedCompYearly)
@@ -55,69 +54,92 @@ function cleanDataRow(row) {
     }
 }
 
-function createScatterplot(container) {
-    xScale = d3
-        .scaleLinear()
-        .range([dim.marginLeft, dim.width - dim.marginRight])
-    yScale = d3
-        .scaleLinear()
-        .range([dim.height - dim.marginBottom, dim.marginTop])
+class Plotter {
+    constructor({parentNode, cssClass, layout, axes, refreshFn}) {
+        this.layout = layout
+        this.axes = axes
 
-    const svg = container
-        .append('svg')
-        .attr('viewBox', [0, 0, dim.width, dim.height])
-        .attr('class', 'scatterplot')
-    plot = svg
-        .append('g')
-        .attr('class', 'plotarea')
-    xAxis = d3.axisBottom(xScale)
-    xAxisGroup = svg
-        .append('g')
-        .attr('transform', `translate(0 ${dim.height - dim.marginBottom})`)
-        .call(xAxis)
-    yAxis = d3.axisLeft(yScale)
-    yAxisGroup = svg
-        .append('g')
-        .attr('transform', `translate(${dim.marginLeft} 0)`)
-        .call(yAxis)
+        this.xScale = d3
+            .scaleLinear()
+            .range([this.layout.marginLeft, this.layout.width - this.layout.marginRight])
+        this.yScale = d3
+            .scaleLinear()
+            .range([this.layout.height - this.layout.marginBottom, this.layout.marginTop])
 
-    svg.append('text')
-        .attr('class', 'axis-label')
-        .attr('y', 0)
-        .attr('dy', '1.5em')
-        .attr('x', (dim.height - dim.marginBottom - dim.marginTop) / -2 - dim.marginTop)
-        .attr('transform', 'rotate(-90)')
-        .text('Annual Compensation (USD)')
-    svg.append('text')
-        .attr('class', 'axis-label')
-        .attr('y', dim.height)
-        .attr('dy', '-1em')
-        .attr('x', dim.marginLeft + (dim.width - dim.marginLeft - dim.marginRight) / 2)
-        .text('Years Coding Professionally')
-    svg.append('text')
-        .attr('class', 'title')
-        .attr('y', '0')
-        .attr('x', dim.marginLeft + (dim.width - dim.marginLeft - dim.marginRight) / 2)
-        .attr('dy', '1.2em')
-        .text('Developer Compensation by Gender and Age')
+        this.svg = parentNode
+            .append('svg')
+            .attr('viewBox', [0, 0, this.layout.width, this.layout.height])
+            .attr('class', cssClass)
+        this.plot = this.svg
+            .append('g')
+            .attr('class', 'plotarea')
+        this.xAxis = d3.axisBottom(this.xScale)
+        this.xAxisGroup = this.svg
+            .append('g')
+            .attr('transform', `translate(0 ${this.layout.height - this.layout.marginBottom})`)
+            .call(this.xAxis)
+        this.yAxis = d3.axisLeft(this.yScale)
+        this.yAxisGroup = this.svg
+            .append('g')
+            .attr('transform', `translate(${this.layout.marginLeft} 0)`)
+            .call(this.yAxis)
+
+        this.svg.append('text')
+            .attr('class', 'axis-label')
+            .attr('y', 0)
+            .attr('dy', '1.5em')
+            .attr('x', (this.layout.height - this.layout.marginBottom - this.layout.marginTop) / -2 - this.layout.marginTop)
+            .attr('transform', 'rotate(-90)')
+            .text(axes.yLabel)
+        this.svg.append('text')
+            .attr('class', 'axis-label')
+            .attr('y', this.layout.height)
+            .attr('dy', '-1em')
+            .attr('x', this.layout.marginLeft + (this.layout.width - this.layout.marginLeft - this.layout.marginRight) / 2)
+            .text(axes.xLabel)
+        this.svg.append('text')
+            .attr('class', 'title')
+            .attr('y', '0')
+            .attr('x', this.layout.marginLeft + (this.layout.width - this.layout.marginLeft - this.layout.marginRight) / 2)
+            .attr('dy', '1.2em')
+            .text(axes.title)
+
+        this.refresh = () => refreshFn(this)
+        this.refresh()
+    }
 }
 
-function populateScatterplot() {
-    const vizData = filteredData.filter(d =>
+function populateScatterplot({xScale, yScale, plot, xAxisGroup, yAxisGroup, xAxis, yAxis}) {
+    const data = filteredData.filter(d =>
         d.ConvertedCompYearly
         && d.YearsCodePro
     )
+    xScale.domain([0, d3.max(data, d => d.YearsCodePro)])
+    yScale.domain([0, d3.max(data, d => d.ConvertedCompYearly)])
 
-    xScale.domain([0, d3.max(vizData, d => d.YearsCodePro)])
-    yScale.domain([0, d3.max(vizData, d => d.ConvertedCompYearly)])
-    plot.selectAll()
-        .data(vizData)
-        .join('circle')
+    xAxisGroup
+        .transition()
+        .duration(1000)
+        .call(xAxis)
+    yAxisGroup
+        .transition()
+        .duration(1000)
+        .call(yAxis)
+
+    const dater = plot.selectAll('circle')
+        .data(data)
+    dater
+        .enter()
+        .append('circle')
+        .merge(dater)
+        .transition()
+        .duration(1000)
             .attr('class', d => d.IsWoman ? 'target' : '')
             .attr('cx', d => xScale(d.YearsCodePro))
             .attr('cy', d => yScale(d.ConvertedCompYearly))
-    xAxisGroup.call(xAxis)
-    yAxisGroup.call(yAxis)
+    dater
+        .exit()
+            .remove()
 }
 
 function processData() {
@@ -134,11 +156,21 @@ function processData() {
         'As Stack Overflow is by far the largest Q&A social network for programmers, these surveys should be excellent sample datasets from which to aggregate accurate information about developers in general.',
         'Unfortunately, the latest Stack Overflow developer survey dataset available (2021) gives concerning insights about gender and compensation amongst professional developers in the United States.'
     ])
+    
     addSection('Gender Representation and Compensation', [
         'Test test test'
     ], sect => {
-        createScatterplot(sect)
-        populateScatterplot()
+        scatterplot = new Plotter({
+            parentNode: sect,
+            cssClass: 'scatterplot',
+            layout: defaultLayout,
+            axes: {
+                title: 'Developer Compensation by Gender and Age',
+                xLabel: 'Years Coding Professionally',
+                yLabel: 'Annual Compensation (USD)'
+            },
+            refreshFn: populateScatterplot
+        })
     })
 
     // addSection('Gender Presence and Compensation', [
@@ -227,8 +259,8 @@ function addSection(title, textList, sectionFn) {
     d3.select('aside').append('button')
         .text('Do the Thing')
         .on('click', _ => {
-            filteredData = fullData.filter(d => d.ConvertedCompYearly < 200000)
-            populateScatterplot()
+            filteredData = filteredData.filter(d => d.YearsCodePro <= 10)
+            scatterplot.refresh()
         })
 })()
 
