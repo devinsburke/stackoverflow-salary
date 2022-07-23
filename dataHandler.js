@@ -17,7 +17,7 @@ class DataHandler {
     createParameterElements(container, parameters, onChangeCallback) {
         this.container = container
         this.parameters = parameters
-        this.onChangeCallback = onChangeCallback
+        this.onChange = onChangeCallback
         
         for (const p of this.parameters) {
             const distinct =
@@ -44,7 +44,7 @@ class DataHandler {
 
     #refreshData() {
         this.Data = this.#data.filter(d => this.parameters.every(p => d[p.field] == p.value))
-        this.onChangeCallback()
+        this.onChange()
     }
 
     static #cleanRow(row) {

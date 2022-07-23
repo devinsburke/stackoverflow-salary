@@ -16,46 +16,6 @@ button {
     cursor: pointer;
 }
 
-aside {
-    background: #587ba4;
-    cursor: default;
-    height: 100vh;
-    padding: 1rem;
-    user-select: none;
-    width: 20rem;
-}
-
-    aside ul {
-        list-style: none;
-        margin: 0 0 1rem 0;
-        padding: 0;
-    }
-        aside ul li {
-            color: #fff;
-            margin: 0.5rem 0;
-        }
-
-            aside ul li::before {
-                content: attr(data-index) '. ';
-            }
-
-            [data-index='1'] aside ul li[data-index='1'],
-            [data-index='2'] aside ul li[data-index='2'],
-            [data-index='3'] aside ul li[data-index='3'],
-            [data-index='4'] aside ul li[data-index='4'] {
-                font-weight: bold;
-            }
-
-    aside button {
-        width: 50%;
-    }
-
-    [data-index='1'] #previous,
-    [data-index='4'] #next {
-        color: gray;
-        pointer-events: none;
-    }
-
 main {
     flex-grow: 1;
     margin-top: 0;
@@ -84,3 +44,77 @@ main {
     [data-index='4'] main {
         margin-top: -300vh;
     }
+
+
+
+aside {
+    background: #587ba4;
+    cursor: default;
+    height: 100vh;
+    padding: 1rem;
+    user-select: none;
+    width: 20rem;
+}
+    aside ul {
+        list-style: none;
+        margin: 0 0 1rem 0;
+        padding: 0;
+    }
+        aside ul li {
+            color: #fff;
+            margin: 0.5rem 0;
+        }
+            aside ul li::before {
+                content: attr(data-index) '. ';
+            }
+            [data-index='1'] aside ul li[data-index='1'],
+            [data-index='2'] aside ul li[data-index='2'],
+            [data-index='3'] aside ul li[data-index='3'],
+            [data-index='4'] aside ul li[data-index='4'] {
+                font-weight: bold;
+            }
+    aside button {
+        width: 50%;
+    }
+    [data-index='1'] #previous,
+    [data-index='4'] #next {
+        color: gray;
+        pointer-events: none;
+    }
+    aside label:not(.toggle) {
+        color: #fffa;
+        font-size: 0.75rem;
+    }
+    aside .toggle {
+        --width: 40px;
+        border-radius: calc(var(--width) / 4);
+        cursor: pointer;
+        display: inline-block;
+        height: calc(var(--width) / 2);
+        width: var(--width);
+    }
+        aside .toggle input {
+            display: none;
+        }
+        aside .toggle .circle {
+            display: inline-block;
+            width: calc(var(--width) / 2);
+        }
+    aside select {
+        background: #587ba4;
+        border: none;
+        border-bottom: .2rem solid #fff7;
+        color: white;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        outline: none;
+        padding: .25rem;
+        width: 100%;
+    }
+        aside select:hover,
+        aside select:focus {
+            background: #39506a;
+        }
+        aside select:focus {
+            border-bottom-color: transparent;
+        }

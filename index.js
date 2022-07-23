@@ -53,8 +53,13 @@ function addSection(title, textList, sectionFn) {
 }
 
 (async() => {
+    const visualizations = []
     const dataHandler = await new DataHandler().load('./data.csv')
-    dataHandler.createParameterElements('aside', defaultParameters)
+    dataHandler.createParameterElements(
+        'aside',
+        defaultParameters,
+        () => visualizations.forEach(v => v.refresh())
+    )
 
     addSection('Intro', [
         'Each year, Stack Overflow hosts a survey asking developers numerous questions about their careers and preferences. Amongst the information collected is employment, geography, education, experience, age, gender identity, and compensation.',
@@ -65,7 +70,7 @@ function addSection(title, textList, sectionFn) {
     addSection('Gender Representation and Compensation', [
         'Test test test'
     ], sect => {
-        new Plotter({
+        visualizations.push(new Plotter({
             data: {
                 dataAccessor: () => dataHandler.Data,
                 xValueAccessor: d => d.YearsCodePro,
@@ -80,7 +85,7 @@ function addSection(title, textList, sectionFn) {
                 xLabel: 'Years Coding Professionally',
                 yLabel: 'Annual Compensation (USD)'
             },
-        })
+        }))
     })
 
     d3.select('aside').append('button')

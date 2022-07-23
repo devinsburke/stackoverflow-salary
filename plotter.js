@@ -54,11 +54,6 @@ class Plotter {
     }
 }
 
-class PlotHandler {
-    #plots = []
-    
-}
-
 function populateScatterplot({data, xScale, yScale, plot, xAxisGroup, yAxisGroup, xAxis, yAxis}) {
     let contextData = data.dataAccessor()
     contextData = contextData.filter(d => data.xValueAccessor(d) && data.yValueAccessor(d))
