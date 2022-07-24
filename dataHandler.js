@@ -14,36 +14,52 @@ class DataHandler {
         return this
     }
 
-    createParameterElements(container, parameters, onChangeCallback) {
+    async createParameterElements(container, parameters, onChangeCallback) {
         this.container = container
         this.parameters = parameters
         this.onChange = onChangeCallback
         
         for (const p of this.parameters) {
-            const distinct =
-                [...new Set(this.#data.map(d => d[p.field]))]
-                .sort((a,b) => a - b)
-
             d3.select(this.container)
                 .append('label')
                 .text(p.title)
-            d3.select(this.container)
-                .append('select')
-                    .on('change', e => {
-                        p.value = e.currentTarget.value
+
+            if (p.type == 'toggle') {
+                const label = d3
+                    .select(this.container)
+                    .append('label')
+                        .attr('class', 'toggle')
+                label.append('input')
+                    .attr('type', 'checkbox')
+                    .attr('checked', p.value)
+                    .on('change', async e => {
+                        p.value = e.currentTarget.checked || null
                         this.#refreshData()
                     })
-                    .selectAll()
-                    .data(distinct)
-                    .join('option')
-                        .text(d => d)
-                        .property('selected', d => d[p.field] == p.value)
+                label.append('span')
+
+            } else if (p.type == 'select') {
+                const distinct = [...new Set(this.#data.map(d => d[p.field]))]
+                d3.select(this.container)
+                    .append('select')
+                        .on('change', async e => {
+                            p.value = e.currentTarget.value
+                            this.#refreshData()
+                        })
+                        .selectAll()
+                        .data(distinct)
+                        .join('option')
+                            .text(d => d)
+                            .property('selected', d => d[p.field] == p.value)
+            }
         }
         this.#refreshData()
     }
 
     #refreshData() {
-        this.Data = this.#data.filter(d => this.parameters.every(p => d[p.field] == p.value))
+        this.Data = this.#data.filter(d => this.parameters.every(p => {
+            return !p.value || d[p.field] == p.value
+        }))
         this.onChange()
     }
 
@@ -53,14 +69,14 @@ class DataHandler {
             MainBranch: row.MainBranch,
             Employment: row.Employment,
             Country: row.Country,
-            US_State: row.US_State, // TODO: 
-            Age: row.Age,           // TODO: 
-            EdLevel: row.EdLevel == row.EdLevel.replace('â€™', `'`), // TODO:
+            US_State: row.US_State, // TODO:
+            Age: row.Age,
+            EdLevel: row.EdLevel.replace('â€™', `'`),
             YearsCodePro: row.YearsCodePro == 'Less than one year'
                 ? 0.5
-                : parseInt(row.YearsCodePro), // TODO: 
+                : parseInt(row.YearsCodePro), // TODO:
             ConvertedCompYearly: DataHandler.#estimateCompensation(row), // TODO:
-            Gender: gender, // TODO: 
+            Gender: gender, // TODO:
             IsMan: gender.includes('Man'),
             IsWoman: gender.includes('Woman')
         }

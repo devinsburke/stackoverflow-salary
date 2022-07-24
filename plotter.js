@@ -1,13 +1,14 @@
 class Plotter {
-    constructor({data, parentNode, cssClass, layout, axes, refreshFn}) {
-        this.data = data
+    constructor({dataAccessor, parentNode, cssClass, title, layout, x, y, refreshCallback}) {
+        this.dataAccessor = dataAccessor
         this.layout = layout
-        this.axes = axes
+        this.x = x
+        this.y = y
 
-        this.xScale = d3
+        this.x.scale = d3
             .scaleLinear()
             .range([this.layout.marginLeft, this.layout.width - this.layout.marginRight])
-        this.yScale = d3
+        this.y.scale = d3
             .scaleLinear()
             .range([this.layout.height - this.layout.marginBottom, this.layout.marginTop])
 
@@ -18,16 +19,16 @@ class Plotter {
         this.plot = this.svg
             .append('g')
             .attr('class', 'plotarea')
-        this.xAxis = d3.axisBottom(this.xScale)
-        this.xAxisGroup = this.svg
+        this.x.axis = d3.axisBottom(this.x.scale)
+        this.x.axisGroup = this.svg
             .append('g')
             .attr('transform', `translate(0 ${this.layout.height - this.layout.marginBottom})`)
-            .call(this.xAxis)
-        this.yAxis = d3.axisLeft(this.yScale)
-        this.yAxisGroup = this.svg
+            .call(this.x.axis)
+        this.y.axis = d3.axisLeft(this.y.scale)
+        this.y.axisGroup = this.svg
             .append('g')
             .attr('transform', `translate(${this.layout.marginLeft} 0)`)
-            .call(this.yAxis)
+            .call(this.y.axis)
 
         this.svg.append('text')
             .attr('class', 'axis-label')
@@ -35,39 +36,49 @@ class Plotter {
             .attr('dy', '1.5em')
             .attr('x', (this.layout.height - this.layout.marginBottom - this.layout.marginTop) / -2 - this.layout.marginTop)
             .attr('transform', 'rotate(-90)')
-            .text(axes.yLabel)
+            .text(y.label)
         this.svg.append('text')
             .attr('class', 'axis-label')
             .attr('y', this.layout.height)
             .attr('dy', '-1em')
             .attr('x', this.layout.marginLeft + (this.layout.width - this.layout.marginLeft - this.layout.marginRight) / 2)
-            .text(axes.xLabel)
+            .text(x.label)
         this.svg.append('text')
             .attr('class', 'title')
             .attr('y', '0')
             .attr('x', this.layout.marginLeft + (this.layout.width - this.layout.marginLeft - this.layout.marginRight) / 2)
             .attr('dy', '1.2em')
-            .text(axes.title)
+            .text(title)
 
-        this.refresh = () => refreshFn(this)
+        this.refresh = () => refreshCallback(this)
         this.refresh()
     }
 }
 
-function populateScatterplot({data, xScale, yScale, plot, xAxisGroup, yAxisGroup, xAxis, yAxis}) {
-    let contextData = data.dataAccessor()
-    contextData = contextData.filter(d => data.xValueAccessor(d) && data.yValueAccessor(d))
-    xScale.domain([0, d3.max(contextData, data.xValueAccessor)])
-    yScale.domain([0, d3.max(contextData, data.yValueAccessor)])
+class Axis {
+    constructor(field, title, scale, axis, axisGroup) {
+        this.field = field
+        this.title = title
+        this.scale = scale
+        this.axis = axis
+        this.axisGroup = axisGroup
+    }
+}
 
-    xAxisGroup
+function populateScatterplot({dataAccessor, x, y, plot}) {
+    let contextData = dataAccessor()
+    contextData = contextData.filter(d => d[x.field] && d[y.field])
+    x.scale.domain([0, d3.max(contextData, d => d[x.field])])
+    y.scale.domain([0, d3.max(contextData, d => d[y.field])])
+
+    x.axisGroup
         .transition()
-        .duration(1000)
-        .call(xAxis)
-    yAxisGroup
+        .duration(500)
+        .call(x.axis)
+    y.axisGroup
         .transition()
-        .duration(1000)
-        .call(yAxis)
+        .duration(500)
+        .call(y.axis)
 
     const dater = plot.selectAll('circle')
         .data(contextData)
@@ -75,11 +86,11 @@ function populateScatterplot({data, xScale, yScale, plot, xAxisGroup, yAxisGroup
         .enter()
         .append('circle')
         .merge(dater)
+            .classed('target', d => d.IsWoman)
         .transition()
-        .duration(1000)
-            .attr('class', d => d.IsWoman ? 'target' : '')
-            .attr('cx', d => xScale(data.xValueAccessor(d)))
-            .attr('cy', d => yScale(data.yValueAccessor(d)))
+            .duration(500)
+            .attr('cx', d => x.scale(d[x.field]))
+            .attr('cy', d => y.scale(d[y.field]))
     dater
         .exit()
             .remove()
