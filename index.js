@@ -46,8 +46,18 @@ const defaultParameters = [
     {
         title: 'Compensation',
         type: 'range',
-        value: 1000000,
-        field: 'ConvertedCompYearly'
+        value: 1000000, // Hard coded ceiling
+        field: 'ConvertedCompYearly',
+        textBefore: 'Up to $',
+        textAfter: ' USD'
+    },
+    {
+        title: 'Professional Experience',
+        type: 'range',
+        value: null,
+        field: 'YearsCodePro',
+        textBefore: 'Up to ',
+        textAfter: ' years'
     }
 ]
 

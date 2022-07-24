@@ -38,15 +38,19 @@ class DataHandler {
                     })
                 label.append('span')
             } else if (p.type == 'range') {
-                const max = p.value || Math.max(...this.#data.map(d => d[p.field] || 0))
+                const max = p.value || Math.trunc(Math.max(...this.#data.map(d => d[p.field] || 0)))
                 wrapper
                     .append('input')
                         .attr('type', 'range')
                         .attr('max', max)
-                        .attr('min', 0)
+                        .attr('min', 1)
+                        .attr('data-value', DataHandler.#formatNumber(max))
+                        .attr('data-text-before', p.textBefore)
+                        .attr('data-text-after', p.textAfter)
                         .property('value', max)
                         .on('change', e => {
                             p.value = parseInt(e.currentTarget.value) || null
+                            e.currentTarget.setAttribute('data-value', DataHandler.#formatNumber(p.value))
                             this.#refreshData()
                         })
             } else if (p.type == 'select') {
@@ -95,6 +99,14 @@ class DataHandler {
             IsMan: gender.includes('Man'),
             IsWoman: gender.includes('Woman')
         }
+    }
+
+    static #formatNumber(num) {
+        if (num >= 1000000)
+            return (Math.trunc(num/1000000)).toLocaleString() + 'M'
+        else if (num >= 1000)
+            return (Math.trunc(num/1000)).toLocaleString() + 'K'
+        return num
     }
 
     static #estimateCompensation(row) {

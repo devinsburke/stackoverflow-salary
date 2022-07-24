@@ -119,9 +119,12 @@ main {
 
 
 aside {
+    --dark-color: #39506a;
+    --medium-color: #587ba4;
+    --light-color: #fff7;
     align-items: center;
     align-content: start;
-    background: #587ba4;
+    background: var(--medium-color);
     cursor: default;
     display: grid;
     gap: 1em;
@@ -141,7 +144,7 @@ aside {
         font-size: 0.75rem;
     }
     aside .toggle {
-        border: .15rem solid #fff7;
+        border: .15rem solid var(--light-color);
         border-radius: 1rem;
         cursor: pointer;
         display: inline-block;
@@ -170,9 +173,9 @@ aside {
             transform: translateX(100%);
         }
     aside select {
-        background: #587ba4;
+        background: var(--medium-color);
         border: none;
-        border-bottom: .2rem solid #fff7;
+        border-bottom: .2rem solid var(--light-color);
         color: white;
         font-size: 1rem;
         margin-bottom: 1rem;
@@ -182,7 +185,7 @@ aside {
     }
         aside select:hover,
         aside select:focus {
-            background: #39506a;
+            background: var(--dark-color);
         }
         aside select:focus {
             border-bottom-color: transparent;
@@ -190,21 +193,30 @@ aside {
     aside input[type=range] {
         --size: 2em;
         -webkit-appearance: none;
-        background: #fff7;
+        align-items: center;
+        background: var(--light-color);
         border-radius: calc(var(--size) / 2);
         height: var(--size);
         opacity: 0.7;
         outline: none;
+        position: relative;
         transition: opacity .2s;
         width: 50%;
     }
-    aside input[type=range]:hover {
-        opacity: 1;
-    }
+        aside input[type=range]:after {
+            content: attr(data-text-before) attr(data-value) attr(data-text-after);
+            color: var(--light-color);
+            left: calc(100% + 1em);
+            position: absolute;
+            width: 100%;
+        }
+        aside input[type=range]:hover {
+            opacity: 1;
+        }
         aside input[type=range]::-moz-range-thumb {
             width: var(--size);
             height: var(--size);
-            background: #39506a;
+            background: var(--dark-color);
             cursor: pointer;
             border-radius: calc(var(--size) / 2);
         }
@@ -213,7 +225,7 @@ aside {
             appearance: none;
             width: var(--size);
             height: var(--size);
-            background: #39506a;
+            background: var(--dark-color);
             cursor: pointer;
             border-radius: calc(var(--size) / 2);
         }
