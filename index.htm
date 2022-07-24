@@ -7,11 +7,16 @@
         <link rel="stylesheet" href="./svg.css">
         <title>StackOverflow Developer Survey Analysis</title>
     </head>
-    <body data-index="1">
+    <body>
+        <section id="intro" class="loading">
+            <span>In January 2021, over 83,000 software developers were surveyed by Stack Overflow, the biggest online developer community worldwide.</span>
+            <span>Participants submitted their personal demographics, employment, compensation, experience, and education level.</span>
+            <strong>Analysis of that data shows a pay gap between women* and their peers.</strong>
+            <div class="controls"></div>
+            <p class="note">Here, <em>Women</em> is defined as respondents who included <em>Woman</em> in their one or more gender selections. <br/>Blank or declined responses are omitted due to uncertainty.</p>
+        </section>
         <main></main>
-        <aside>
-            <ul id="slide-list"></ul>
-        </aside>
+        <aside></aside>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="./dataHandler.js"></script>
         <script src="./plotter.js"></script>
