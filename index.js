@@ -52,7 +52,7 @@ const defaultParameters = [
         textAfter: ' USD'
     },
     {
-        title: 'Professional Experience',
+        title: 'Years Coding Professionally',
         type: 'range',
         value: null,
         field: 'YearsCodePro',

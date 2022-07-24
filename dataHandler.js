@@ -54,7 +54,7 @@ class DataHandler {
                             this.#refreshData()
                         })
             } else if (p.type == 'select') {
-                const distinct = [...new Set(this.#data.map(d => d[p.field]))]
+                const distinct = ['', ...new Set(this.#data.map(d => d[p.field]))]
                 wrapper
                     .append('select')
                         .on('change', async e => {
@@ -65,7 +65,7 @@ class DataHandler {
                         .data(distinct)
                         .join('option')
                             .text(d => d)
-                            .property('selected', d => d[p.field] == p.value)
+                            .property('selected', d => d == p.value)
             }
         }
         this.#refreshData()
