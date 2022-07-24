@@ -48,18 +48,20 @@ html, body {
             font-size: 2rem;
             margin: 1rem;
             text-transform: uppercase;
+            animation: fadeIn 2s;
         }
         #intro.loading .controls:before {
             animation: spin 1.2s linear infinite;
-            content: ' ';
-            display: block;
-            width: 5rem;
-            height: 5rem;
             border: 0.5rem solid transparent;
             border-top-color: #fff;
             border-radius: 50%;
+            content: '';
+            display: block;
+            height: 5rem;
+            width: 5rem;
         }
         #intro.loading .controls:after {
+            animation: none;
             content: 'Loading Data...';
             font-size: 2rem;
             margin: 1rem;
@@ -71,9 +73,6 @@ html, body {
         #intro .note:before {
             content: '*'
         }
-    #intro.hidden {
-        display: none;
-    }
 
 
 
@@ -120,38 +119,22 @@ main {
 
 
 aside {
+    align-items: center;
+    align-content: start;
     background: #587ba4;
     cursor: default;
+    display: grid;
+    gap: 1em;
+    grid-template-columns: 1fr 5fr;
     height: 100vh;
     padding: 1rem;
     user-select: none;
-    width: 20rem;
+    width: 26%;
+
 }
-    aside ul {
-        list-style: none;
-        margin: 0 0 1rem 0;
-        padding: 0;
-    }
-        aside ul li {
-            color: #fff;
-            margin: 0.5rem 0;
-        }
-            aside ul li::before {
-                content: attr(data-index) '. ';
-            }
-            [data-index='1'] aside ul li[data-index='1'],
-            [data-index='2'] aside ul li[data-index='2'],
-            [data-index='3'] aside ul li[data-index='3'],
-            [data-index='4'] aside ul li[data-index='4'] {
-                font-weight: bold;
-            }
-    aside button {
-        width: 50%;
-    }
-    [data-index='1'] #previous,
-    [data-index='4'] #next {
-        color: gray;
-        pointer-events: none;
+    aside div {
+        display: flex;
+        align-items: center;
     }
     aside label:not(.toggle) {
         color: #fffa;
@@ -204,7 +187,41 @@ aside {
         aside select:focus {
             border-bottom-color: transparent;
         }
+    aside input[type=range] {
+        --size: 2em;
+        -webkit-appearance: none;
+        background: #fff7;
+        border-radius: calc(var(--size) / 2);
+        height: var(--size);
+        opacity: 0.7;
+        outline: none;
+        transition: opacity .2s;
+        width: 50%;
+    }
+    aside input[type=range]:hover {
+        opacity: 1;
+    }
+        aside input[type=range]::-moz-range-thumb {
+            width: var(--size);
+            height: var(--size);
+            background: #39506a;
+            cursor: pointer;
+            border-radius: calc(var(--size) / 2);
+        }
+        aside input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: var(--size);
+            height: var(--size);
+            background: #39506a;
+            cursor: pointer;
+            border-radius: calc(var(--size) / 2);
+        }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }

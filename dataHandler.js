@@ -20,30 +20,41 @@ class DataHandler {
         this.onChange = onChangeCallback
         
         for (const p of this.parameters) {
-            d3.select(this.container)
+            const wrapper = d3.select(this.container)
+            wrapper
                 .append('label')
                 .text(p.title)
 
             if (p.type == 'toggle') {
-                const label = d3
-                    .select(this.container)
+                const label = wrapper
                     .append('label')
                         .attr('class', 'toggle')
                 label.append('input')
                     .attr('type', 'checkbox')
-                    .attr('checked', p.value)
+                    .property('checked', p.value)
                     .on('change', async e => {
                         p.value = e.currentTarget.checked || null
                         this.#refreshData()
                     })
                 label.append('span')
-
+            } else if (p.type == 'range') {
+                const max = p.value || Math.max(...this.#data.map(d => d[p.field] || 0))
+                wrapper
+                    .append('input')
+                        .attr('type', 'range')
+                        .attr('max', max)
+                        .attr('min', 0)
+                        .property('value', max)
+                        .on('change', e => {
+                            p.value = parseInt(e.currentTarget.value) || null
+                            this.#refreshData()
+                        })
             } else if (p.type == 'select') {
                 const distinct = [...new Set(this.#data.map(d => d[p.field]))]
-                d3.select(this.container)
+                wrapper
                     .append('select')
                         .on('change', async e => {
-                            p.value = e.currentTarget.value
+                            p.value = e.currentTarget.value || null
                             this.#refreshData()
                         })
                         .selectAll()
@@ -58,6 +69,8 @@ class DataHandler {
 
     #refreshData() {
         this.Data = this.#data.filter(d => this.parameters.every(p => {
+            if (p.type == 'range')
+                return !p.value || d[p.field] <= p.value
             return !p.value || d[p.field] == p.value
         }))
         this.onChange()
@@ -65,6 +78,8 @@ class DataHandler {
 
     static #cleanRow(row) {
         const gender = row.Gender.split(';')
+        // Add a random decimal to these numbers to spread data on scatterplot.
+        const random = Math.random()
         return {
             MainBranch: row.MainBranch,
             Employment: row.Employment,
@@ -74,8 +89,8 @@ class DataHandler {
             EdLevel: row.EdLevel.replace('â€™', `'`),
             YearsCodePro: row.YearsCodePro == 'Less than one year'
                 ? 0.5
-                : parseInt(row.YearsCodePro), // TODO:
-            ConvertedCompYearly: DataHandler.#estimateCompensation(row), // TODO:
+                : parseInt(row.YearsCodePro) + random, // TODO:
+            ConvertedCompYearly: DataHandler.#estimateCompensation(row) + random,
             Gender: gender, // TODO:
             IsMan: gender.includes('Man'),
             IsWoman: gender.includes('Woman')

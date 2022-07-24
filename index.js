@@ -38,10 +38,16 @@ const defaultParameters = [
         field: 'Age',
     },
     {
-        title: 'Female Only',
+        title: 'Women Only',
         type: 'toggle',
-        value: true,
+        value: false,
         field: 'IsWoman'
+    },
+    {
+        title: 'Compensation',
+        type: 'range',
+        value: 1000000,
+        field: 'ConvertedCompYearly'
     }
 ]
 
@@ -53,24 +59,37 @@ new DataHandler().load('./data.csv').then(async dataHandler => {
         () => visualizations.forEach(v => v.refresh())
     )
 
-    const intro = document.getElementById('intro')
-    intro.classList.remove('loading')
-    intro.addEventListener('click', e => {
-        intro.classList.add('hidden')
+    const main = d3.select('main')
+    const sect = main
+        .append('section')
 
-        const main = d3.select('main')
-        const sect = main
-            .append('section')
+    visualizations.push(new Plotter({
+        dataAccessor: () => dataHandler.Data,
+        refreshCallback: populateScatterplot,
+        parentNode: sect,
+        cssClass: 'scatterplot',
+        title: 'Developer Compensation by Gender and Age',
+        layout: defaultLayout,
+        x: new Axis('YearsCodePro', 'Years Coding Professionally'),
+        y: new Axis('ConvertedCompYearly', 'Annual Compensation (USD)'),
+    }))
 
-        visualizations.push(new Plotter({
-            dataAccessor: () => dataHandler.Data,
-            refreshCallback: populateScatterplot,
-            parentNode: sect,
-            cssClass: 'scatterplot',
-            title: 'Developer Compensation by Gender and Age',
-            layout: defaultLayout,
-            x: new Axis('YearsCodePro', 'Years Coding Professionally'),
-            y: new Axis('ConvertedCompYearly', 'Annual Compensation (USD)'),
-        }))
-    })
+    await IntroScene()
 })
+
+async function IntroScene() {
+    const intro = d3.select('#intro')
+    await new Promise(r => {
+        intro.classed('loading', false)
+            .on('click', () => {
+                intro.transition()
+                    .style('top', '-100vh')
+                    .on('end', r)
+            })
+    })
+    intro.style('display', 'none')
+}
+
+function Scene1() {
+
+}

@@ -4,6 +4,7 @@ class Plotter {
         this.layout = layout
         this.x = x
         this.y = y
+        this.title = title
 
         this.x.scale = d3
             .scaleLinear()
@@ -36,19 +37,19 @@ class Plotter {
             .attr('dy', '1.5em')
             .attr('x', (this.layout.height - this.layout.marginBottom - this.layout.marginTop) / -2 - this.layout.marginTop)
             .attr('transform', 'rotate(-90)')
-            .text(y.label)
+            .text(this.y.title)
         this.svg.append('text')
             .attr('class', 'axis-label')
             .attr('y', this.layout.height)
             .attr('dy', '-1em')
             .attr('x', this.layout.marginLeft + (this.layout.width - this.layout.marginLeft - this.layout.marginRight) / 2)
-            .text(x.label)
+            .text(this.x.title)
         this.svg.append('text')
             .attr('class', 'title')
             .attr('y', '0')
             .attr('x', this.layout.marginLeft + (this.layout.width - this.layout.marginLeft - this.layout.marginRight) / 2)
             .attr('dy', '1.2em')
-            .text(title)
+            .text(this.title)
 
         this.refresh = () => refreshCallback(this)
         this.refresh()
