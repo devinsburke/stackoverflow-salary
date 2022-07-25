@@ -1,31 +1,29 @@
 .scatterplot {
     font-size: 8px;
-    width: 600px;
-    height: 400px;
-    border: solid;
+    max-width: 100%;
+    max-height: 100%;
 }
     .scatterplot circle {
         r: 1%;
         fill: transparent;
-        stroke: gray;
+        stroke: var(--neutral-color);
     }
         .scatterplot circle.target {
-            stroke: red;
+            stroke: var(--target-color);
         }
 
     .scatterplot text {
-        font-size: 8px;
+        font-size: 0.5rem;
     }
 
     .scatterplot text.axis-label {
-        fill: gray;
+        fill: var(--neutral-color);
+        font-weight: lighter;
         text-anchor: middle;
     }
     .scatterplot text.title {
-        text-anchor: middle;
-        font-size: 1.2em;
-        font-weight: bold;
-        fill: gray;
+        fill: var(--neutral-color);
+        font-size: 0.65rem;
     }
 
 .measure { }

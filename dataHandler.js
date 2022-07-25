@@ -85,6 +85,7 @@ class DataHandler {
         // Add a random decimal to these numbers to spread data on scatterplot.
         const random = Math.random()
         return {
+            ResponseId: row.ResponseId,
             MainBranch: row.MainBranch,
             Employment: row.Employment,
             Country: row.Country,

@@ -1,6 +1,7 @@
 class Plotter {
-    constructor({dataAccessor, parentNode, cssClass, title, layout, x, y, refreshCallback}) {
+    constructor({dataAccessor, keyAccessor, parentNode, cssClass, title, layout, x, y, refreshCallback}) {
         this.dataAccessor = dataAccessor
+        this.keyAccessor = keyAccessor
         this.layout = layout
         this.x = x
         this.y = y
@@ -34,25 +35,24 @@ class Plotter {
         this.svg.append('text')
             .attr('class', 'axis-label')
             .attr('y', 0)
-            .attr('dy', '1.5em')
+            .attr('dy', '1em')
             .attr('x', (this.layout.height - this.layout.marginBottom - this.layout.marginTop) / -2 - this.layout.marginTop)
             .attr('transform', 'rotate(-90)')
             .text(this.y.title)
         this.svg.append('text')
             .attr('class', 'axis-label')
             .attr('y', this.layout.height)
-            .attr('dy', '-1em')
+            .attr('dy', '-.5em')
             .attr('x', this.layout.marginLeft + (this.layout.width - this.layout.marginLeft - this.layout.marginRight) / 2)
             .text(this.x.title)
         this.svg.append('text')
             .attr('class', 'title')
             .attr('y', '0')
             .attr('x', this.layout.marginLeft + (this.layout.width - this.layout.marginLeft - this.layout.marginRight) / 2)
-            .attr('dy', '1.2em')
+            .attr('dy', '1em')
             .text(this.title)
 
         this.refresh = () => refreshCallback(this)
-        this.refresh()
     }
 }
 
@@ -66,7 +66,7 @@ class Axis {
     }
 }
 
-function populateScatterplot({dataAccessor, x, y, plot}) {
+function populateScatterplot({dataAccessor, keyAccessor, x, y, plot}) {
     let contextData = dataAccessor()
     contextData = contextData.filter(d => d[x.field] && d[y.field])
     x.scale.domain([0, d3.max(contextData, d => d[x.field])])
@@ -81,18 +81,22 @@ function populateScatterplot({dataAccessor, x, y, plot}) {
         .duration(500)
         .call(y.axis)
 
-    const dater = plot.selectAll('circle')
-        .data(contextData)
+    const dater = plot
+        .selectAll('circle')
+        .data(contextData, keyAccessor)
     dater
         .enter()
-        .append('circle')
+            .append('circle')
+            .classed('target', d => d.IsWoman) // TODO: Un-hard code.
         .merge(dater)
-            .classed('target', d => d.IsWoman)
-        .transition()
-            .duration(500)
-            .attr('cx', d => x.scale(d[x.field]))
-            .attr('cy', d => y.scale(d[y.field]))
+            .transition()
+                .duration(() => Math.floor(Math.random() * 1500))
+                .attr('transform', '')
+                .attr('cx', d => x.scale(d[x.field]))
+                .attr('cy', d => y.scale(d[y.field]))
     dater
         .exit()
-            .remove()
+            .transition()
+            .duration(() => Math.floor(Math.random() * 1500))
+            .attr('transform', 'translate(0 -200)') // TODO: Un-hard code.
 }
