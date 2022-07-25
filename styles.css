@@ -43,6 +43,10 @@ aside.bans {
     aside.bans .ban.target {
         color: var(--target-color);
     }
+    aside.bans .ban.highlight:before {
+        font-weight: bold;
+        text-transform: uppercase;
+    }
 
 #intro {
     align-items: center;
@@ -107,23 +111,47 @@ aside.bans {
 
 
 #navigation {
-    align-items: center;
-    background:#0009;
-    color: #fff;
-    cursor: pointer;
+    background:#fff;
+    bottom: 0;
+    color: #000;
     display: flex;
-    display: none;
-    flex-direction: column;
+    flex-direction: row-reverse;
     font-size: 1.5rem;
     gap: 1.5rem;
-    height: 100%;
-    justify-content: center;
-    padding: 5%;
+    height: 30%;
+    justify-content: space-between;
+    opacity: 0.3;
+    padding: 1rem;
     position: absolute;
     text-align: center;
+    transition: ease .5s;
     width: 100%;
-    z-index: 100;
+    z-index: 50;
 }
+    #navigation button {
+        border: 0;
+        background: none;
+        cursor: pointer;
+        flex-grow: 1;
+        font-size: 3rem;
+    }
+        #navigation button:hover {
+            color: #fff;
+            background: gray !important;
+        }
+        #navigation button:active {
+            background: lightgray !important;
+        }
+    #navigation:hover {
+        opacity: 1;
+        z-index: 150;
+    }
+        #navigation:hover button.target {
+            background: var(--target-color);
+        }
+    #navigation.hidden {
+        bottom: -30%;
+    }
 
 
 
@@ -131,9 +159,6 @@ aside.bans {
 
 
 
-button {
-    cursor: pointer;
-}
 
 main {
     flex-grow: 1;
@@ -150,6 +175,15 @@ main {
         height: calc(100% - 3.5rem);
     }
 
+.annotation {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: .2em .2em .5em #0002;
+    padding: 1rem;
+    position: fixed;
+    transform: translateX(20%);
+    z-index: 100;
+}
 
 
 aside.parameters {

@@ -1,0 +1,48 @@
+//donut = women make up just X% of developers
+//donut = and they only earn x% of a male peer's salary
+//---
+//Why? Are they less qualified?
+//...Nope. Women are slightly more educated than men, yet they
+//...start out at lower salaries. Yet they are more likely to be
+//...employed than men, meaning employers are more likely to hire and
+//...retain them than men.
+//---
+//Scatterplot
+
+
+
+
+    // addSection('Gender Presence and Compensation', [
+    //     'Test test test'
+    // ], sect => {
+    //     const manData = filteredData.filter(d => d.IsMan)
+    //     const womanData = filteredData.filter(d => d.IsWoman)
+    //     const nonWomanData = filteredData.filter(d => !d.IsWoman)
+
+    //     const donutArc = d3.arc()
+    //         .innerRadius(0.3)
+    //         .outerRadius(0.5)
+    //     const pie = d3.pie()
+    //         .sort(null)
+    //         .startAngle(Math.PI)([
+    //             womanData.length / filteredData.length,
+    //             (filteredData.length - womanData.length) / filteredData.length
+    //         ])
+
+    //     const portions = sect
+    //         .append('svg')
+    //             .attr('class', 'measure')
+    //             .attr('viewBox', '0 0 1 0.5')
+    //         .append('g')
+    //             .selectAll()
+    //             .data(pie)
+    //     portions
+    //         .join('path')
+    //             .attr('d', donutArc)
+    //     portions
+    //         .join('text')
+    //             .text('hi')
+    //             .attr('transform', d => donutArc.centroid(d))
+    //             .style('text-anchor', 'middle')
+    //             .style('font-size', '20%')
+    // })

@@ -31,6 +31,7 @@ class DataHandler {
                         .attr('class', 'toggle')
                 label.append('input')
                     .attr('type', 'checkbox')
+                    .attr('id', 'parameter-' + p.field)
                     .property('checked', p.value)
                     .on('change', async e => {
                         p.value = e.currentTarget.checked || null
@@ -41,6 +42,7 @@ class DataHandler {
                 const max = p.value || Math.trunc(Math.max(...this.#data.map(d => d[p.field] || 0)))
                 wrapper
                     .append('input')
+                        .attr('id', 'parameter-' + p.field)
                         .attr('type', 'range')
                         .attr('max', max)
                         .attr('min', 1)
@@ -57,6 +59,7 @@ class DataHandler {
                 const distinct = ['', ...new Set(this.#data.map(d => d[p.field]))]
                 wrapper
                     .append('select')
+                        .attr('id', 'parameter-' + p.field)
                         .on('change', async e => {
                             p.value = e.currentTarget.value || null
                             this.#refreshData()
