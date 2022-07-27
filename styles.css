@@ -184,7 +184,38 @@ main {
     transform: translateX(20%);
     z-index: 100;
 }
+    .annotation.done {
+        opacity: 0.6
+    }
+        .annotation.done:hover {
+            opacity: 1;
+        }
 
+.tooltip {
+    background: var(--medium-color);
+    border-radius: 1rem;
+    display: grid;
+    font-size: 0.75rem;
+    gap: 0.5rem;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-auto-flow: column;
+    padding: 1rem;
+    position: absolute;
+    transform: translate(.75rem, -50%);
+    visibility: hidden;
+    width: 20rem;
+}
+    .tooltip dt {
+        color: var(--light-color);
+        text-align: right;
+    }
+    .tooltip dd {
+        color: #fff;
+        margin-inline-start: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
 aside.parameters {
     align-items: center;

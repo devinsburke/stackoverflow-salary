@@ -5,11 +5,14 @@
 }
     .scatterplot circle {
         r: 1%;
-        fill: transparent;
+        fill: #ffffff01;
         stroke: var(--neutral-color);
     }
         .scatterplot circle.target {
             stroke: var(--target-color);
+        }
+        .scatterplot circle:hover {
+            stroke: yellow;
         }
 
     .scatterplot text {

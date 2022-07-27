@@ -85,22 +85,24 @@ class DataHandler {
 
     static #cleanRow(row) {
         const gender = row.Gender.split(';')
+        const comp = DataHandler.#estimateCompensation(row)
         // Add a random decimal to these numbers to spread data on scatterplot.
         const random = Math.random()
         return {
             ResponseId: row.ResponseId,
+            Gender: gender, // TODO:
             MainBranch: row.MainBranch,
             Employment: row.Employment,
             Country: row.Country,
             US_State: row.US_State, // TODO:
             Age: row.Age,
             EdLevel: row.EdLevel.replace('â€™', `'`),
+            YearsCodeProRaw: row.YearsCodePro,
             YearsCodePro: row.YearsCodePro == 'Less than one year'
                 ? 0.5
                 : parseInt(row.YearsCodePro) + random, // TODO:
-            ConvertedCompYearly: DataHandler.#estimateCompensation(row) + random,
-            Gender: gender, // TODO:
-            IsMan: gender.includes('Man'),
+            ConvertedCompYearlyRaw: comp,
+            ConvertedCompYearly: comp + random,
             IsWoman: gender.includes('Woman')
         }
     }
