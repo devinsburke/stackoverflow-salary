@@ -13,7 +13,7 @@ html, body {
     flex-grow: 1;
     height: 100vh;
     margin: 0;
-    overflow-y: hidden;
+    overflow: hidden;
     padding: 0;
     user-select: none;
 }
@@ -143,6 +143,7 @@ aside.bans {
             background: lightgray !important;
         }
     #navigation:hover {
+        box-shadow: 1em 1em 2em 1em #0009;
         opacity: 1;
         z-index: 150;
     }
@@ -164,8 +165,12 @@ main {
     flex-grow: 1;
     margin-top: 0;
     padding: 1rem;
+    pointer-events: none;
     transition: ease 1s;
 }
+    main.interactive {
+        pointer-events: all;
+    }
     main > h1 {
         margin: 0 0 1rem 0;
         font-size: 2rem;
@@ -176,20 +181,20 @@ main {
     }
 
 .annotation {
-    background: #fff;
+    background: var(--target-color);
     border-radius: 0.5rem;
     box-shadow: .2em .2em .5em #0002;
+    color: #fff;
     padding: 1rem;
     position: fixed;
     transform: translateX(20%);
+    transition: ease 1s;
     z-index: 100;
 }
     .annotation.done {
-        opacity: 0.6
+        background: #fff;
+        color: var(--dark-color);
     }
-        .annotation.done:hover {
-            opacity: 1;
-        }
 
 .tooltip {
     background: var(--medium-color);
@@ -201,7 +206,7 @@ main {
     grid-auto-flow: column;
     padding: 1rem;
     position: absolute;
-    transform: translate(.75rem, -50%);
+    transform: translate(calc(-100% - 1.5rem), -50%);
     visibility: hidden;
     width: 20rem;
 }
@@ -227,9 +232,12 @@ aside.parameters {
     grid-template-columns: 1fr 5fr;
     height: 100vh;
     padding: 1rem;
+    pointer-events: none;
     width: 26%;
-
 }
+    aside.interactive {
+        pointer-events: all;
+    }
     aside.parameters div {
         display: flex;
         align-items: center;
