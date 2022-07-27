@@ -18,7 +18,7 @@ html, body {
     user-select: none;
 }
 
-aside.bans {
+#bans {
     align-content: space-around;
     color: var(--neutral-color);
     display: grid;
@@ -26,27 +26,6 @@ aside.bans {
     text-align: center;
     width: 10%;
 }
-    aside.bans .ban {
-        line-height: 1;
-    }
-        aside.bans .ban:before {
-            content: attr(data-title);
-            display: block;
-            font-size: 0.8rem;
-        }
-        aside.bans .ban:after {
-            content: attr(data-value);
-            display: block;
-            font-size: 2.5rem;
-            font-weight: lighter;
-        }
-    aside.bans .ban.target {
-        color: var(--target-color);
-    }
-    aside.bans .ban.highlight:before {
-        font-weight: bold;
-        text-transform: uppercase;
-    }
 
 #intro {
     align-items: center;
@@ -168,13 +147,15 @@ main {
     pointer-events: none;
     transition: ease 1s;
 }
-    main.interactive {
-        pointer-events: all;
-    }
-    main > h1 {
-        margin: 0 0 1rem 0;
+    main::before {
+        content: attr(data-title);
+        display: block;
         font-size: 2rem;
         font-weight: lighter;
+        margin: 0 0 1rem 0;
+    }
+    main.interactive {
+        pointer-events: all;
     }
     main > section {
         height: calc(100% - 3.5rem);
@@ -186,11 +167,25 @@ main {
     box-shadow: .2em .2em .5em #0002;
     color: #fff;
     padding: 1rem;
+    pointer-events: none;
     position: fixed;
     transform: translateX(20%);
     transition: ease 1s;
     z-index: 100;
 }
+    .annotation.ban {
+        --ban-index: 0;
+        right: 10%;
+        top: calc(100%/8 * var(--ban-index));
+        transform: translateY(-50%) translateY(6vh);
+        width: 20rem;
+    }
+    .annotation.select {
+
+    }
+    .annotation.input {
+        
+    }
     .annotation.done {
         background: #fff;
         color: var(--dark-color);
@@ -222,7 +217,7 @@ main {
         white-space: nowrap;
     }
 
-aside.parameters {
+#parameters {
     align-items: center;
     align-content: start;
     background: var(--medium-color);
@@ -238,15 +233,15 @@ aside.parameters {
     aside.interactive {
         pointer-events: all;
     }
-    aside.parameters div {
+    #parameters div {
         display: flex;
         align-items: center;
     }
-    aside.parameters label:not(.toggle) {
+    #parameters label:not(.toggle) {
         color: #fffa;
         font-size: 0.75rem;
     }
-    aside.parameters .toggle {
+    #parameters .toggle {
         border: .15rem solid var(--light-color);
         border-radius: 1rem;
         cursor: pointer;
@@ -256,13 +251,13 @@ aside.parameters {
         position: relative;
         width: 3rem;
     }
-        aside.parameters .toggle:hover {
+        #parameters .toggle:hover {
             background: #fff3;
         }
-        aside.parameters .toggle input {
+        #parameters .toggle input {
             display: none;
         }
-        aside.parameters .toggle span {
+        #parameters .toggle span {
             background-color: #0007;
             border-radius: 50%;
             display: inline-block;
@@ -271,11 +266,11 @@ aside.parameters {
             transition: ease .5s transform;
             width: 50%;
         }
-        aside.parameters .toggle :checked ~ span {
+        #parameters .toggle :checked ~ span {
             background-color: #fff;
             transform: translateX(100%);
         }
-    aside.parameters select {
+    #parameters select {
         background: var(--medium-color);
         border: none;
         border-bottom: .2rem solid var(--light-color);
@@ -286,14 +281,14 @@ aside.parameters {
         padding: .25rem;
         width: 100%;
     }
-        aside.parameters select:hover,
-        aside.parameters select:focus {
+        #parameters select:hover,
+        #parameters select:focus {
             background: var(--dark-color);
         }
-        aside.parameters select:focus {
+        #parameters select:focus {
             border-bottom-color: transparent;
         }
-    aside.parameters input[type=range] {
+    #parameters input[type=range] {
         --size: 2em;
         -webkit-appearance: none;
         align-items: center;
@@ -306,24 +301,24 @@ aside.parameters {
         transition: opacity .2s;
         width: 50%;
     }
-        aside.parameters input[type=range]:after {
+        #parameters input[type=range]:after {
             content: attr(data-text-before) attr(data-value) attr(data-text-after);
             color: var(--light-color);
             left: calc(100% + 1em);
             position: absolute;
             width: 100%;
         }
-        aside.parameters input[type=range]:hover {
+        #parameters input[type=range]:hover {
             opacity: 1;
         }
-        aside.parameters input[type=range]::-moz-range-thumb {
+        #parameters input[type=range]::-moz-range-thumb {
             width: var(--size);
             height: var(--size);
             background: var(--dark-color);
             cursor: pointer;
             border-radius: calc(var(--size) / 2);
         }
-        aside.parameters input[type=range]::-webkit-slider-thumb {
+        #parameters input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: var(--size);

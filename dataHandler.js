@@ -112,7 +112,7 @@ class DataHandler {
             return (Math.trunc(num/1000000)).toLocaleString() + 'M'
         else if (num >= 1000)
             return (Math.trunc(num/1000)).toLocaleString() + 'K'
-        return num
+        return (Math.trunc(num*10)/10).toLocaleString()
     }
 
     static #estimateCompensation(row) {

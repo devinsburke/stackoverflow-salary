@@ -73,8 +73,7 @@ class Plotter {
             .enter()
         dater.append('dt')
             .text(d => d[1])
-        dater.append('dd')
-            .text('')
+        dater.insert('dd')
 
         this.refresh = () => refreshCallback(this)
     }

@@ -29,13 +29,24 @@
         font-size: 0.65rem;
     }
 
-.measure { }
-    .measure g {
-        transform: translate(50%, 100%) rotate(90deg);
+.ban {
+    line-height: 1;
+}
+    .ban:before {
+        content: attr(data-title);
+        display: block;
+        font-size: 0.8rem;
     }
-    .measure path {
-        fill: #00000044;
-    }
-        .measure path:first-child {
-            fill: #ff0000;
+        .ban.highlight:before {
+            font-weight: bold;
+            text-transform: uppercase;
         }
+    .ban:after {
+        content: attr(data-value);
+        display: block;
+        font-size: 2.5rem;
+        font-weight: lighter;
+    }
+    .ban.target {
+        color: var(--target-color);
+    }

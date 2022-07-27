@@ -5,6 +5,11 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="./styles.css">
         <link rel="stylesheet" href="./svg.css">
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="./dataHandler.js"></script>
+        <script src="./plotter.js"></script>
+        <script src="./ban.js"></script>
+        <script src="./index.js"></script>
         <title>StackOverflow Developer Survey Analysis</title>
     </head>
     <body>
@@ -20,15 +25,8 @@
             <button data-cmd="replay">Replay</button>
             <button data-cmd="back">Back</button>
         </section>
-        <aside class="parameters"></aside>
-        <main>
-            <h1>Gender by Compensation and Experience</h1>
-        </main>
-        <aside class="bans"></aside>
-        <script src="https://d3js.org/d3.v7.min.js"></script>
-        <script src="./dataHandler.js"></script>
-        <script src="./plotter.js"></script>
-        <script src="./ban.js"></script>
-        <script src="./index.js"></script>
+        <aside id="parameters"></aside>
+        <main data-title="Gender by Compensation and Experience"></main>
+        <aside id="bans"></aside>
     </body>
 </html>

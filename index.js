@@ -61,17 +61,18 @@ const defaultParameters = [
     }
 ]
 
-new DataHandler().load('./data.csv').then(async dataHandler => {
+window.addEventListener('DOMContentLoaded', async() => {
+    const dataHandler = await new DataHandler().load('./data.csv')
     const visualizations = []
     await dataHandler.createParameterElements(
-        'aside.parameters',
+        '#parameters',
         defaultParameters,
         () => visualizations.forEach(v => v.refresh())
     )
 
     const main = d3.select('main')
     const sect = main.append('section')
-    const bans = d3.select('.bans')
+    const bans = d3.select('#bans')
     
     visualizations.push(
         new BAN({
@@ -155,6 +156,35 @@ new DataHandler().load('./data.csv').then(async dataHandler => {
     await ShowScene()
 })
 
+
+
+async function annotate(text, position, delayMs) {
+    const annotation = d3.select('body')
+        .append('div')
+        .attr('class', 'annotation')
+        .text(text)
+    for (const k in position)
+        annotation.style(k, position[k])
+    annotation
+        .transition()
+        .style('transform', '')
+    await new Promise(r => setTimeout(r, delayMs))
+    annotation
+        .classed('done', true)
+    await new Promise(r => setTimeout(r, 1000))
+}
+
+async function setParameter(name, value, delayMs) {
+    const el = document.getElementById(`parameter-${name}`)
+    el.value = value || el.getAttribute('max') || ''
+    el.dispatchEvent(new Event('change'))
+    await new Promise(r => setTimeout(r, delayMs))
+}
+
+async function pause(ms) {
+    return new Promise(r => setTimeout(r, ms))
+}
+
 async function IntroScene() {
     return new Promise(r => {
         d3.select('#intro')
@@ -198,7 +228,7 @@ async function ShowScene() {
             i--
     }
 
-    d3.selectAll('main, aside.parameters')
+    d3.selectAll('main, #parameters')
         .classed('interactive', true)
 }
 
@@ -206,19 +236,19 @@ async function Scene1() {
     const isWoman = document.getElementById('parameter-IsWoman')
     isWoman.checked = false
     isWoman.click()
-    await pause(1000)
+    await pause(2000)
 
     await annotate('541 survey participants were women in the US working fulltime as developers.', {
         right: '10%',
         top: '1rem',
         width: '20rem'
     }, 3000)
-    await annotate('Observe that their average total compensation is $117K USD annually.', {
+    await annotate('Their average total compensation is $117K USD annually. This seems good, at first...', {
         right: '10%',
         top: '6rem',
-        width: '20rem'
+        width: '25rem'
     }, 3000)
-    await annotate('Also notice that salaries for women do not appear to significantly increase even as years of experience increase.', {
+    await annotate('Observe that salaries for women do not appear to significantly increase even as experience increases.', {
         right: '15%',
         top: '50%',
         width: '20rem'
@@ -229,44 +259,44 @@ async function Scene2() {
     const isWoman = document.getElementById('parameter-IsWoman')
     isWoman.checked = true
     isWoman.click()
-    await pause(1000)
+    await pause(2000)
 
-    await annotate('When we add in their 7,000 non-women peers (men, non-binary, etc.), we realize that these 541 women only constitute 7% of the US software development workforce.', {
+    await annotate('However, when we add their 7,000 non-women peers (men, non-binary, etc.), we realize that these 541 women only constitute 7% of the US software development workforce.', {
         right: '10%',
-        top: '10%',
-        width: '25rem'
-    }, 3000)
+        top: '50%',
+        width: '30rem'
+    }, 4000)
     await annotate('And that $117K average compensation is a lot less exciting when compared to the $141K their peers earn on average.', {
+        right: '10%',
+        top: '65%',
+        width: '20rem'
+    }, 5000)
+    await annotate('But we haven\'t considered differences in experience. Look at the Pay-to-Years Ratios to the right: women earn $22K per year of professional experience, which is $3K more than their counterparts, who earn $19K. Does this mean the average woman is paid better but simply earlier in her career...?', {
+        right: '10%',
+        top: '80%',
+        width: '40rem'
+    }, 6000)
+}
+
+async function Scene3() {
+    await annotate('To answer that, let\'s see how women are paid when first entering the workforce.', {
+        left: '20%',
+        top: '33%',
+        width: '20rem'
+    }, 3000)
+    await annotate('Next, let\'s limit compensation to $300K and experience to 8 years, to remove anomolies that skew the data.', {
+        left: '2.5%',
+        top: '68%',
+        width: '20rem'
+    }, 3000)
+    await setParameter('Age', '18-24 years old', 1500)
+    await setParameter('ConvertedCompYearly', 300000, 1500)
+    await setParameter('YearsCodePro', 8, 2000)
+    await annotate('Notice that average pay in this age group is basically equal for women and their peers: $93K vs. $94K. And women still earn more per year of professional experience.', {
         right: '10%',
         top: '30%',
         width: '20rem'
     }, 4000)
-    await annotate('However, we aren\'t accounting for differences in experience. Look at the Pay : Years Ratios to the right. Women actually earn more for each year of professional experience than their counterparts. That is, they earn $22K for each year of experience, whereas their peers only earn $19K.', {
-        right: '10%',
-        top: '45%',
-        width: '40rem'
-    }, 5000)
-}
-
-async function Scene3() {
-    await setParameter('Age', '18-24 years old', 2000)
-    await annotate('Next, let\'s look at how women in the undergraduate (18-24) age group are compensated when first starting out.', {
-        right: '10%',
-        top: '10%',
-        width: '20rem'
-    }, 3000)
-    await annotate('We lower the compensation and experience ranges to $300K and 8 years, respectively, to avoid anomolies skewing the data.', {
-        left: '2.5%',
-        top: '65%',
-        width: '25rem'
-    }, 3000)
-    await setParameter('ConvertedCompYearly', 300000, 3000)
-    await setParameter('YearsCodePro', 8, 3000)
-    await annotate('Notice that average compensation in this age group is basically identical: $93K vs. $94K. And women still earn more for each year of professional experience than their counterparts.', {
-        right: '10%',
-        top: '30%',
-        width: '20rem'
-    }, 3000)
 }
 
 async function Scene4() {
@@ -323,37 +353,10 @@ async function Scene6() {
         right: '10%',
         top: '10%',
         width: '30rem'
-    }, 8000)
+    }, 7000)
     await annotate('Now it\'s your turn. On the next slide, you will be able to adjust the filters on the left yourself, as well as hover over the circles on the chart to see more detail. See what observations you can make.', {
         left: '50%',
         top: '50%',
         width: '35rem'
     }, 5000)
-}
-
-async function annotate(text, position, delayMs) {
-    const annotation = d3.select('body')
-        .append('div')
-        .attr('class', 'annotation')
-        .text(text)
-    for (const k in position)
-        annotation.style(k, position[k])
-    annotation
-        .transition()
-        .style('transform', '')
-    await new Promise(r => setTimeout(r, delayMs))
-    annotation
-        .classed('done', true)
-        await new Promise(r => setTimeout(r, 1000))
-}
-
-async function setParameter(name, value, delayMs) {
-    const el = document.getElementById(`parameter-${name}`)
-    el.value = value || el.getAttribute('max') || ''
-    el.dispatchEvent(new Event('change'))
-    await new Promise(r => setTimeout(r, delayMs))
-}
-
-async function pause(ms) {
-    return new Promise(r => setTimeout(r, ms))
 }
