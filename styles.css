@@ -10,8 +10,16 @@ html, body {
     --target-color: #FF8B00;
     --neutral-color: darkgray;
     display: flex;
-    flex-grow: 1;
+    flex-direction: column;
     height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    user-select: none;
+}
+
+main {
+    display: flex;
+    flex-grow: 1;
     margin: 0;
     overflow: hidden;
     padding: 0;
@@ -88,28 +96,53 @@ html, body {
             content: '*'
         }
 
+footer {
+    box-shadow: 1rem 1rem 2rem 1rem #0006;
+    height: 25vh;
+    position: relative;
+    overflow: hidden;
+}
+
+#description {
+    font-size: 2rem;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    gap: 1.5rem;
+    height: 25vh;
+    justify-content: center;
+    padding: 1rem;
+    transition: ease 1s;
+}
+    #description.hidden {
+        margin-top: -25vh;
+    }
+
+#progress {
+    background: blue;
+    height: .5rem;
+    left: 0;
+    position: absolute;
+    top: 0;
+}
 
 #navigation {
-    background:#fff;
-    bottom: 0;
-    color: #000;
+    align-items: center;
     display: flex;
-    flex-direction: row-reverse;
-    font-size: 1.5rem;
     gap: 1.5rem;
-    height: 30%;
-    justify-content: space-between;
-    opacity: 0.3;
+    height: 25vh;
+    justify-content: center;
     padding: 1rem;
-    position: absolute;
-    text-align: center;
-    transition: ease .5s;
-    width: 100%;
-    z-index: 50;
+    transition: ease 1s;
+
+
+    align-items: stretch;
+    display: flex;
+    gap: 1.5rem;
 }
     #navigation button {
+        background: lightgray;
         border: 0;
-        background: none;
         cursor: pointer;
         flex-grow: 1;
         font-size: 3rem;
@@ -121,12 +154,7 @@ html, body {
         #navigation button:active {
             background: lightgray !important;
         }
-    #navigation:hover {
-        box-shadow: 1em 1em 2em 1em #0009;
-        opacity: 1;
-        z-index: 150;
-    }
-        #navigation:hover button.target {
+        #navigation button.target {
             background: var(--target-color);
         }
     #navigation.hidden {
@@ -140,25 +168,22 @@ html, body {
 
 
 
-main {
+#scatterplot {
     flex-grow: 1;
     margin-top: 0;
     padding: 1rem;
     pointer-events: none;
     transition: ease 1s;
 }
-    main::before {
+    #scatterplot::before {
         content: attr(data-title);
         display: block;
         font-size: 2rem;
         font-weight: lighter;
         margin: 0 0 1rem 0;
     }
-    main.interactive {
+    #scatterplot.interactive {
         pointer-events: all;
-    }
-    main > section {
-        height: calc(100% - 3.5rem);
     }
 
 .annotation {
@@ -225,12 +250,11 @@ main {
     display: grid;
     gap: 1em;
     grid-template-columns: 1fr 5fr;
-    height: 100vh;
     padding: 1rem;
     pointer-events: none;
     width: 26%;
 }
-    aside.interactive {
+    #parameters.interactive {
         pointer-events: all;
     }
     #parameters div {

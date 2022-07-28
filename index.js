@@ -1,8 +1,8 @@
 const defaultLayout = {
     height: 200,
-    width: 300,
+    width: 400,
     marginBottom: 35,
-    marginLeft: 60,
+    marginLeft: 40,
     marginRight: 8,
     marginTop: 5,
 }
@@ -52,7 +52,7 @@ const defaultParameters = [
         textAfter: ' USD'
     },
     {
-        title: 'Years Coding Professionally',
+        title: 'Experience',
         type: 'range',
         value: null,
         field: 'YearsCodePro',
@@ -70,17 +70,13 @@ window.addEventListener('DOMContentLoaded', async() => {
         () => visualizations.forEach(v => v.refresh())
     )
 
-    const main = d3.select('main')
-    const sect = main.append('section')
-    const bans = d3.select('#bans')
-    
     visualizations.push(
         new BAN({
             dataAccessor: () => dataHandler.Data,
             filter: d => d.IsWoman,
             reducer: (b, a) => b + 1,
             cssClass: 'target highlight',
-            parentNode: bans,
+            parentNode: d3.select('#bans'),
             title: 'Women',
         }),
         new BAN({
@@ -88,23 +84,23 @@ window.addEventListener('DOMContentLoaded', async() => {
             filter: d => d.IsWoman,
             reducer: (a,b,i) => a+(b.ConvertedCompYearly-a)/(i+1),
             cssClass: 'target',
-            parentNode: bans,
-            title: 'Avg. Compensation',
+            parentNode: d3.select('#bans'),
+            title: 'Compensation',
         }),
         new BAN({
             dataAccessor: () => dataHandler.Data.filter(d => d.YearsCodePro),
             filter: d => d.IsWoman,
             reducer: (a,b,i) => a+(b.YearsCodePro-a)/(i+1),
             cssClass: 'target',
-            parentNode: bans,
-            title: 'Avg. Years Coding',
+            parentNode: d3.select('#bans'),
+            title: 'Experience (yrs.)',
         }),
         new BAN({
             dataAccessor: () => dataHandler.Data.filter(d => d.ConvertedCompYearly && d.YearsCodePro),
             filter: d => d.IsWoman,
             reducer: (a,b,i) => a+((b.ConvertedCompYearly / b.YearsCodePro)-a)/(i+1),
             cssClass: 'target',
-            parentNode: bans,
+            parentNode: d3.select('#bans'),
             title: 'Pay:Years Ratio',
         }),
         new BAN({
@@ -112,7 +108,7 @@ window.addEventListener('DOMContentLoaded', async() => {
             filter: d => !d.IsWoman,
             reducer: (b, a) => b + 1,
             cssClass: 'highlight',
-            parentNode: bans,
+            parentNode: d3.select('#bans'),
             title: 'Non-Women',
         }),
         new BAN({
@@ -120,35 +116,35 @@ window.addEventListener('DOMContentLoaded', async() => {
             filter: d => !d.IsWoman,
             reducer: (a,b,i) => a+(b.ConvertedCompYearly-a)/(i+1),
             cssClass: '',
-            parentNode: bans,
-            title: 'Avg. Compensation',
+            parentNode: d3.select('#bans'),
+            title: 'Compensation',
         }),
         new BAN({
             dataAccessor: () => dataHandler.Data.filter(d => d.YearsCodePro),
             filter: d => !d.IsWoman,
             reducer: (a,b,i) => a+(b.YearsCodePro-a)/(i+1),
             cssClass: '',
-            parentNode: bans,
-            title: 'Avg. Years Coding',
+            parentNode: d3.select('#bans'),
+            title: 'Experience (yrs.)',
         }),
         new BAN({
             dataAccessor: () => dataHandler.Data.filter(d => d.ConvertedCompYearly && d.YearsCodePro),
             filter: d => !d.IsWoman,
             reducer: (a,b,i) => a+((b.ConvertedCompYearly / b.YearsCodePro)-a)/(i+1),
             cssClass: '',
-            parentNode: bans,
+            parentNode: d3.select('#bans'),
             title: 'Pay:Years Ratio',
         }),
         new Plotter({
             dataAccessor: () => dataHandler.Data,
             keyAccessor: d => d.ResponseId,
             refreshCallback: populateScatterplot,
-            parentNode: sect,
+            parentNode: d3.select('#scatterplot'),
             cssClass: 'scatterplot',
             //title: 'Gender Distribution by Compensation and Experience',
             layout: defaultLayout,
-            x: new Axis('YearsCodePro', 'Years Coding Professionally'),
-            y: new Axis('ConvertedCompYearly', 'Annual Compensation (USD)'),
+            x: new Axis('ConvertedCompYearly', 'Annual Compensation (USD)'),
+            y: new Axis('YearsCodePro', 'Experience (Years)'),
         })
     )
 
@@ -158,19 +154,23 @@ window.addEventListener('DOMContentLoaded', async() => {
 
 
 
-async function annotate(text, position, delayMs) {
+async function annotate(text, description, position, delayMs) {
     const annotation = d3.select('body')
         .append('div')
         .attr('class', 'annotation')
         .text(text)
     for (const k in position)
         annotation.style(k, position[k])
-    annotation
+    annotation.transition().style('transform', '')
+    d3.select('#description')
+        .text(description)
+    d3.select('#progress')
         .transition()
-        .style('transform', '')
+            .duration(delayMs)
+            .style('right', '0')
     await new Promise(r => setTimeout(r, delayMs))
-    annotation
-        .classed('done', true)
+    annotation.classed('done', true)
+    d3.select('#progress').style('right', '')
     await new Promise(r => setTimeout(r, 1000))
 }
 
@@ -209,18 +209,32 @@ async function ShowScene() {
     ]
 
     const navigation = d3.select('#navigation')
+    const description = d3.select('#description')
 
     let i = 0
     while (i < scenes.length) {
+        await new Promise(r => setTimeout(r, 1000))
+
+        d3.select('#backButton')
+            .text(`Back to Slide ${i}`)
+            .style('visibility', i ? 'visible' : 'hidden')
+        d3.select('#replayButton')
+            .text(`Replay Slide ${i+1}`)
+        d3.select('#nextButton')
+            .text(`Continue to Slide ${i+2}`)
+
         await scenes[i]()
 
+        description.classed('hidden', true)
+
         const cmd = await new Promise(r => navigation
-            .classed('hidden', false)
             .selectAll('button')
             .on('click', e => r(e.currentTarget.getAttribute('data-cmd')))
         )
-        navigation.classed('hidden', true)
         d3.selectAll('.annotation').remove()
+
+        description.text('')
+        description.classed('hidden', false)
 
         if (cmd == 'next')
             i++
@@ -228,7 +242,7 @@ async function ShowScene() {
             i--
     }
 
-    d3.selectAll('main, #parameters')
+    d3.selectAll('#scatterplot, #parameters')
         .classed('interactive', true)
 }
 
@@ -238,21 +252,20 @@ async function Scene1() {
     isWoman.click()
     await pause(2000)
 
-    await annotate('541 survey participants were women in the US working fulltime as developers.', {
+    await annotate('541 survey participants were women in the US working fulltime as developers', 
+    'Note our filters on the left side, set to the US, fulltime, developers, and women-only.',
+    {
         right: '10%',
         top: '1rem',
         width: '20rem'
-    }, 3000)
-    await annotate('Their average total compensation is $117K USD annually. This seems good, at first...', {
+    }, 5000)
+    await annotate('Average total compensation is $117K USD annually',
+    '$117K USD seems like a good salary, but we will see how it compares to other salaries on the next slide.',
+    {
         right: '10%',
         top: '6rem',
         width: '25rem'
-    }, 3000)
-    await annotate('Observe that salaries for women do not appear to significantly increase even as experience increases.', {
-        right: '15%',
-        top: '50%',
-        width: '20rem'
-    }, 3000)
+    }, 5000)
 }
 
 async function Scene2() {
