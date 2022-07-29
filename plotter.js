@@ -11,9 +11,10 @@ class Plotter {
         ConvertedCompYearlyRaw: 'Compensation'
     })
 
-    constructor({dataAccessor, keyAccessor, parentNode, cssClass, title, layout, x, y, refreshCallback}) {
+    constructor({dataAccessor, keyAccessor, durationAccessor, parentNode, cssClass, title, layout, x, y, refreshCallback}) {
         this.dataAccessor = dataAccessor
         this.keyAccessor = keyAccessor
+        this.durationAccessor = durationAccessor
         this.layout = layout
         this.x = x
         this.y = y
@@ -33,7 +34,9 @@ class Plotter {
         this.plot = this.svg
             .append('g')
             .attr('class', 'plotarea')
-        this.x.axis = d3.axisBottom(this.x.scale)
+        this.x.axis = d3
+            .axisBottom(this.x.scale)
+            .tickFormat(formatNumber)
         this.x.axisGroup = this.svg
             .append('g')
             .attr('transform', `translate(0 ${this.layout.height - this.layout.marginBottom})`)
@@ -89,18 +92,18 @@ class Axis {
     }
 }
 
-function populateScatterplot({dataAccessor, keyAccessor, x, y, plot, tooltip}) {
+function populateScatterplot({dataAccessor, durationAccessor, keyAccessor, x, y, plot, tooltip}) {
     const contextData = dataAccessor().filter(d => d[x.field] && d[y.field])
     x.scale.domain([0, d3.max(contextData, d => d[x.field])])
     y.scale.domain([0, d3.max(contextData, d => d[y.field])])
 
     x.axisGroup
         .transition()
-        .duration(500)
+        .duration(durationAccessor()?500:0) // TODO: Don't hardcode.
         .call(x.axis)
     y.axisGroup
         .transition()
-        .duration(500)
+        .duration(durationAccessor()?500:0) // TODO: Don't hardcode.
         .call(y.axis)
 
     const dater = plot
@@ -109,6 +112,8 @@ function populateScatterplot({dataAccessor, keyAccessor, x, y, plot, tooltip}) {
     dater
         .enter()
             .append('circle')
+            .attr('transform', 'translate(0 -200)') // TODO: Un-hard code.
+            //.attr('cx', d => x.scale(d[x.field]))
             .classed('target', d => d.IsWoman) // TODO: Un-hard code.
             .on('mousemove', (d, i) => tooltip.style('top', (d.y)+'px').style('left',(d.x)+'px'))
             .on('mouseover', (d, i) => {
@@ -121,13 +126,13 @@ function populateScatterplot({dataAccessor, keyAccessor, x, y, plot, tooltip}) {
             .on('mouseout', () => tooltip.style('visibility', 'hidden'))
         .merge(dater)
             .transition()
-                .duration(() => Math.floor(Math.random() * 1500))
+                .duration(Math.floor(Math.random() * durationAccessor()))
                 .attr('transform', '')
                 .attr('cx', d => x.scale(d[x.field]))
                 .attr('cy', d => y.scale(d[y.field]))
     dater
         .exit()
             .transition()
-            .duration(() => Math.floor(Math.random() * 1500))
+            .duration(Math.floor(Math.random() * durationAccessor()))
             .attr('transform', 'translate(0 -200)') // TODO: Un-hard code.
 }

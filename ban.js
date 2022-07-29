@@ -16,14 +16,6 @@ class BAN {
             .dataAccessor()
             .filter(this.filter)
             .reduce(this.reducer, 0)
-        this.element.attr('data-value', BAN.#formatNumber(value))
-    }
-
-    static #formatNumber(num) {
-        if (num >= 1000000)
-            return (Math.trunc(num/1000000)).toLocaleString() + 'M'
-        else if (num >= 1000)
-            return (Math.trunc(num/1000)).toLocaleString() + 'K'
-        return (Math.trunc(num*10)/10).toLocaleString()
+        this.element.attr('data-value', formatNumber(value))
     }
 }

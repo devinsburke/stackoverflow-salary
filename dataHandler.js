@@ -46,13 +46,13 @@ class DataHandler {
                         .attr('type', 'range')
                         .attr('max', max)
                         .attr('min', 1)
-                        .attr('data-value', DataHandler.#formatNumber(max))
+                        .attr('data-value', formatNumber(max))
                         .attr('data-text-before', p.textBefore)
                         .attr('data-text-after', p.textAfter)
                         .property('value', max)
                         .on('change', e => {
                             p.value = parseInt(e.currentTarget.value) || null
-                            e.currentTarget.setAttribute('data-value', DataHandler.#formatNumber(p.value))
+                            e.currentTarget.setAttribute('data-value', formatNumber(p.value))
                             this.#refreshData()
                         })
             } else if (p.type == 'select') {
@@ -99,20 +99,12 @@ class DataHandler {
             EdLevel: row.EdLevel.replace('â€™', `'`),
             YearsCodeProRaw: row.YearsCodePro,
             YearsCodePro: row.YearsCodePro == 'Less than one year'
-                ? 0.5
-                : parseInt(row.YearsCodePro) + random, // TODO:
+                ? (0.5 * random)
+                : (parseInt(row.YearsCodePro) + random), // TODO:
             ConvertedCompYearlyRaw: comp,
             ConvertedCompYearly: comp + random,
             IsWoman: gender.includes('Woman')
         }
-    }
-
-    static #formatNumber(num) {
-        if (num >= 1000000)
-            return (Math.trunc(num/1000000)).toLocaleString() + 'M'
-        else if (num >= 1000)
-            return (Math.trunc(num/1000)).toLocaleString() + 'K'
-        return (Math.trunc(num*10)/10).toLocaleString()
     }
 
     static #estimateCompensation(row) {

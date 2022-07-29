@@ -23,6 +23,7 @@ main {
     margin: 0;
     overflow: hidden;
     padding: 0;
+    position: relative;
     user-select: none;
 }
 
@@ -30,9 +31,10 @@ main {
     align-content: space-around;
     color: var(--neutral-color);
     display: grid;
+    grid-template-columns: 1fr 1fr;
     justify-content: center;
     text-align: center;
-    width: 10%;
+    width: 18%;
 }
 
 #intro {
@@ -93,15 +95,31 @@ main {
         font-size: 1rem;
     }
         #intro .note:before {
-            content: '*'
+            content: '*';
         }
 
 footer {
     box-shadow: 1rem 1rem 2rem 1rem #0006;
-    height: 25vh;
+    height: 20vh;
     position: relative;
     overflow: hidden;
 }
+    footer::before {
+        background: var(--target-color);
+        content: '';
+        height: .5rem;
+        left: 0;
+        position: absolute;
+        right: 100%;
+        top: 0;
+        transition-duration: 0;
+        transition-timing-function: linear;
+    }
+    footer.active::before {
+        right: 0;
+        transition-duration: var(--pause);
+        transition-timing-function: linear;
+    }
 
 #description {
     font-size: 2rem;
@@ -109,44 +127,47 @@ footer {
     align-items: center;
     display: flex;
     gap: 1.5rem;
-    height: 25vh;
+    height: 20vh;
     justify-content: center;
     padding: 1rem;
     transition: ease 1s;
 }
     #description.hidden {
-        margin-top: -25vh;
+        margin-top: -20vh;
     }
 
-#progress {
-    background: blue;
-    height: .5rem;
-    left: 0;
-    position: absolute;
-    top: 0;
-}
-
 #navigation {
-    align-items: center;
-    display: flex;
-    gap: 1.5rem;
-    height: 25vh;
-    justify-content: center;
-    padding: 1rem;
-    transition: ease 1s;
-
-
     align-items: stretch;
     display: flex;
     gap: 1.5rem;
+    height: 20vh;
+    justify-content: center;
+    padding: 1rem;
+    transition: ease 1s;
 }
     #navigation button {
         background: lightgray;
         border: 0;
         cursor: pointer;
         flex-grow: 1;
-        font-size: 3rem;
+        font-size: 2vw;
     }
+        #nextButton::after {
+            content: '';
+            border-top: .75rem solid transparent;
+            border-bottom: .75rem solid transparent;
+            border-left: .75rem solid black;
+            margin-left: .75rem;
+            display: inline-block;
+        }
+        #previousButton::after {
+            content: '';
+            border-top: .75rem solid transparent;
+            border-bottom: .75rem solid transparent;
+            border-right: .75rem solid black;
+            margin-right: .75rem;
+            display: inline-block;
+        }
         #navigation button:hover {
             color: #fff;
             background: gray !important;
@@ -160,13 +181,6 @@ footer {
     #navigation.hidden {
         bottom: -30%;
     }
-
-
-
-
-
-
-
 
 #scatterplot {
     flex-grow: 1;
@@ -199,22 +213,39 @@ footer {
     z-index: 100;
 }
     .annotation.ban {
-        --ban-index: 0;
-        right: 10%;
-        top: calc(100%/8 * var(--ban-index));
-        transform: translateY(-50%) translateY(6vh);
+        right: 18%;
+        top: calc(80%/4 * var(--annotation-index));
+        transform: translateY(-50%) translateY(10vh);
         width: 20rem;
     }
-    .annotation.select {
-
+        .annotation.ban::after {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 100%;
+            content: '';
+            border-top: .6rem solid transparent;
+            border-bottom: .6rem solid transparent;
+            border-left: .6rem solid var(--target-color);
+            display: inline-block;
+        }
+    .annotation.parameter {
+        left: 23%;
+        top: calc(80%/8 * var(--annotation-index));
+        transform: translateY(-50%) translateY(5vh);
+        width: 20rem;
     }
-    .annotation.input {
-        
-    }
-    .annotation.done {
-        background: #fff;
-        color: var(--dark-color);
-    }
+        .annotation.parameter::after {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 100%;
+            content: '';
+            border-top: .6rem solid transparent;
+            border-bottom: .6rem solid transparent;
+            border-right: .6rem solid var(--target-color);
+            display: inline-block;
+        }
 
 .tooltip {
     background: var(--medium-color);
@@ -244,7 +275,7 @@ footer {
 
 #parameters {
     align-items: center;
-    align-content: start;
+    align-content: space-around;
     background: var(--medium-color);
     cursor: default;
     display: grid;
