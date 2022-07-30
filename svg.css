@@ -27,9 +27,7 @@
         font-size: 0.65rem;
     }
 
-.ban {
-    line-height: 1;
-}
+.ban { }
     .ban:before {
         content: attr(data-title);
         display: block;

@@ -111,7 +111,7 @@ function populateScatterplot({dataAccessor, keyAccessor, x, y, plot, tooltip}, d
     lifecycle = dater
         .enter()
             .append('circle')
-            .attr('transform', 'translate(0 -200)') // TODO: Un-hard code.
+            .attr('transform', 'translate(0 -300)') // TODO: Un-hard code.
             //.attr('cx', d => x.scale(d[x.field]))
             .classed('target', d => d.IsWoman) // TODO: Un-hard code.
             .on('mousemove', (d, i) => tooltip.style('top', (d.y)+'px').style('left',(d.x)+'px'))
@@ -137,5 +137,5 @@ function populateScatterplot({dataAccessor, keyAccessor, x, y, plot, tooltip}, d
         lifecycle = lifecycle
             .transition()
             .duration(() => Math.floor(Math.random() * duration))
-    lifecycle.attr('transform', 'translate(0 -200)') // TODO: Un-hard code.
+    lifecycle.attr('transform', 'translate(0 -300)') // TODO: Un-hard code.
 }

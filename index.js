@@ -1,5 +1,5 @@
 const defaultLayout = {
-    height: 200,
+    height: 250,
     width: 400,
     marginBottom: 35,
     marginLeft: 40,
@@ -219,6 +219,7 @@ async function ShowScene(dataHandler) {
     const scenes = [
         Scene1,
         Scene2,
+        Scene3,
         Scene4,
         Scene5,
         Scene6
@@ -264,135 +265,123 @@ async function ShowScene(dataHandler) {
 async function Scene1(dataHandler) {
     dataHandler.resetParameters()
     d3.select('.scatterplot circle').attr('transform', 'translate(0 -200)')
-    describe('Scene 1: What is the presence and average compensation of women software developers (full-time) in the US?', 21000)
+    describe('Scene 1: What is the presence and average compensation of women software developers (full-time) in the US?', 26000)
 
     dataHandler.setParameter('IsWoman', true, 5000)
     await pause(5000)
     dataHandler.setParameter('IsWoman', false, 6000)
     await pause(6000)
 
-    await annotate(
-        'Representing just 7% of full-time developer respondents in the US, women are outnumbered 13:1 by their peers (men, non-binary, etc.)', 
-        'ban',
-        0,
-        4000
-    )
-    await annotate(
-        'And of the women in the profession, they are compensated 17% less than their peers',
-        'ban',
-        1,
-        3000
-    )
-    await annotate(
-        'But women earn $3K more for each year of professional experience than their peers',
-        'ban',
-        3,
-        3000
-    )
+    await annotate('At just 7% of full-time US developers, women are outnumbered 13:1', 'ban', 0, 4000)
+    await annotate('Women developers are compensated 17% less than their peers', 'ban', 1, 3000)
+    await annotate('But women earn $3K more per year as a professional developer', 'ban', 3, 5000)
+
+    await annotate('Most data is in first 1/3 of the compensation axis, meaning we should zoom the data going forward', 'chart', 0, 5000)
 }
 
 async function Scene2(dataHandler) {
     dataHandler.resetParameters({IsWoman: false})
     dataHandler.refreshData(0)
-    describe('Scene 2: Can the pay gap be explained by differences in years of experience? Let\'s see how people in the earliest age group (18-24) are paid.')
+    describe('Scene 2: Can the pay gap be explained by differences in experience? Let\'s see how developers in the earliest age group (18-24) are paid.', 12000)
 
-    await annotate(
-        'To answer this question, we filter to the 18-24 age group, and we adjust compensation and experience ranges to remove outliers',
-        'parameter',
-        4,
-        500
-    )
-    dataHandler.setParameter('Age', '18-24 years old', 6000)
-    pause(6000)
+    await pause(1000)
+    await annotate('We filter age and zoom into compensation and experience', 'parameter', 4, 100)
+    dataHandler.setParameter('Age', '18-24 years old', 2000)
+    await pause(2000)
     dataHandler.setParameter('ConvertedCompYearly', 300000, 2000)
-    pause(2000)
-    dataHandler.setParameter('YearsCodePro', 8, 3000)
-    pause(3000)
+    await pause(2000)
+    dataHandler.setParameter('YearsCodePro', 8, 2000)
+    await pause(2000)
 
-    await annotate(
-        'Pay in this earlier career group is nearly equal for women and their peers, supporting the idea that the pay gap is due to average experience differences',
-        'ban',
-        1,
-        3000
-    )
+    await annotate('Young people are paid similarly, hinting that experience differences may explain pay gaps', 'ban', 1, 4000)
 }
 
-async function Scene4() {
-    await annotate('We now adjust the age range to 25-34, and raise the compensation and experience ranges to $400K and 17 years, respectively, to accomodate changes in the data while still excluding outliers.',
-    '',
-    {
-        left: '2.5%',
-        top: '65%',
-        width: '25rem'
-    }, 3000)
-    await setParameter('Age', '25-34 years old', 1500)
-    await setParameter('ConvertedCompYearly', 400000, 2000)
-    await setParameter('YearsCodePro', 17, 2000)
-    await annotate('By age 25-34, women are compensated 10% less than their peers and no longer earn more for experience.',
-    '',
-    {
-        right: '10%',
-        top: '10%',
-        width: '20rem'
-    }, 3000)
-    await annotate('The downward trend continues, with 35-44 year old women earning 17% less than their peers, and 45-54 year olds earning 22% less (not shown).',
-    '',
-    {
-        right: '10%',
-        top: '30%',
-        width: '25rem'
-    }, 3000)
+async function Scene3(dataHandler) {
+    dataHandler.resetParameters({
+        IsWoman: false,
+        Age: '18-24 years old',
+        ConvertedCompYearly: 300000,
+        YearsCodePro: 8,
+    })
+    dataHandler.refreshData(0)
+    describe('Scene 3: Do increased age / experience levels maintain similar pay between genders?', 16000)
+
+    await pause(1000)
+    await annotate('We filter age and zoom into compensation and experience', 'parameter', 4, 1000)
+    dataHandler.setParameter('Age', '25-34 years old', 2000)
+    await pause(2000)
+    dataHandler.setParameter('ConvertedCompYearly', 400000, 2000)
+    await pause(2000)
+    dataHandler.setParameter('YearsCodePro', 17, 2000)
+    await pause(2000)
+
+    await annotate('By age 25-34, women are paid 10% less than their peers', 'ban', 1, 3000)
+    await annotate('...Even though average experience levels are similar', 'ban', 2, 3000)
+    await annotate('As well, 25-34 year old women no longer earn more for experience', 'ban', 3, 3000)
 }
 
-async function Scene5() {
-    await annotate('Finally, we will review whether the highest levels of education help bridge the compensation gap.',
-    '',
-    {
-        right: '10%',
-        top: '10%',
-        width: '20rem'
-    }, 3000)
-    await annotate('We filter on doctoral degree as education level, and reset our other previous filters.',
-    '',
-    {
-        left: '2.5%',
-        top: '65%',
-        width: '25rem'
-    }, 3000)
-    await setParameter('EdLevel', 'Other doctoral degree (Ph.D., Ed.D., etc.)', 1000)
-    await setParameter('Age', '', 1000)
-    await setParameter('ConvertedCompYearly', null, 1000)
-    await setParameter('YearsCodePro', null, 1000)
-    await annotate('It does not. Unfortunately, women holding doctoral degrees earn 22% less than their peers with similar degrees.',
-    '',
-    {
-        right: '10%',
-        top: '30%',
-        width: '25rem'
-    }, 3000)
-    await annotate('And although women appear to get advanced degrees earlier in their careers, this does not explain the discrepency. Women with doctoral degrees barely earn more than half what their peers earn ($11K vs. $21K) per year of experience.',
-    '',
-    {
-        right: '10%',
-        top: '45%',
-        width: '30rem'
-    }, 4000)
+async function Scene4(dataHandler) {
+    dataHandler.resetParameters({
+        IsWoman: false,
+        Age: '25-34 years old',
+        ConvertedCompYearly: 400000,
+        YearsCodePro: 17,
+    })
+    dataHandler.refreshData(0)
+    describe('Scene 4: Does the pay gap increase or decrease for mid-to-late-career age (45-54) women?', 10000)
+
+    await pause(1000)
+    await annotate('We filter age and zoom into compensation and experience', 'parameter', 4, 1000)
+    dataHandler.setParameter('Age', '45-54 years old', 2000)
+    await pause(2000)
+    dataHandler.setParameter('YearsCodePro', 40, 2000)
+    await pause(2000)
+
+    await annotate('45-54 year olds earn 20% less than their peers', 'ban', 1, 4000)
 }
 
-async function Scene6() {
-    await setParameter('EdLevel', '', 1500)
-    await annotate('In sum, we have seen that women are underrepresented in software development, are compensated less than their counterparts, and that pay inequality becomes worse with age and experience.',
-    '',
-    {
-        right: '10%',
-        top: '10%',
-        width: '30rem'
-    }, 7000)
-    await annotate('Now it\'s your turn. On the next slide, you will be able to adjust the filters on the left yourself, as well as hover over the circles on the chart to see more detail. See what observations you can make.',
-    '',
-    {
-        left: '50%',
-        top: '50%',
-        width: '35rem'
-    }, 5000)
+async function Scene5(dataHandler) {
+    dataHandler.resetParameters({
+        IsWoman: false,
+        Age: '45-54 years old',
+        ConvertedCompYearly: 400000,
+        YearsCodePro: 40,
+    })
+    dataHandler.refreshData(0)
+    describe('Scene 5: Does education (at the highest level) help bridge the compensation gap?', 18000)
+
+    await pause(1000)
+    await annotate('We filter education to doctoral degrees', 'parameter', 3, 1000)
+    dataHandler.setParameter('EdLevel', 'Other doctoral degree (Ph.D., Ed.D., etc.)', 2000)
+    await pause(2000)
+    dataHandler.setParameter('Age', null, 2000)
+    await pause(2000)
+
+    await annotate('Education does not bridge the gap, as women with doctorates earn 22% less than peers with doctorates', 'ban', 1, 4000)
+    await annotate('In this category, women have more experience than their peers, making the lower pay more questionable', 'ban', 2, 4000)
+    await annotate('Women with doctorates only earn half what their peers earn ($11K vs. $21K) per year of experience', 'ban', 3, 4000)
+}
+
+async function Scene6(dataHandler) {
+    dataHandler.resetParameters({
+        ConvertedCompYearly: 400000,
+        EdLevel: 'Other doctoral degree (Ph.D., Ed.D., etc.)',
+        IsWoman: false,
+        YearsCodePro: 40,
+    })
+    dataHandler.refreshData(0)
+    describe('Scene 6: In sum, we learned...', 23000)
+
+    await pause(1000)
+    dataHandler.setParameter('EdLevel', null, 2000)
+    await pause(2000)
+    dataHandler.setParameter('ConvertedCompYearly', null, 2000)
+    await pause(2000)
+    dataHandler.setParameter('YearsCodePro', null, 2000)
+    await pause(2000)
+
+    await annotate('...that women are significantly underrepresented in software development', 'ban', 0, 4000)
+    await annotate('...that women are consistently compensated less than their peers', 'ban', 1, 4000)
+    await annotate('...that pay inequality becomes worse with age, experience, and education', 'chart', 3, 4000)
+    await annotate('Now it\'s your turn. On the next slide, adjust these filters yourself, and hover over circles on the chart to see detail. See what observations you can make.', 'parameter', 5, 4000)
 }
