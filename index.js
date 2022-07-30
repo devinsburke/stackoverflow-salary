@@ -258,8 +258,10 @@ async function ShowScene(dataHandler) {
             i--
     }
 
-    d3.selectAll('#scatterplot, #parameters')
+    d3.select('body')
         .classed('interactive', true)
+
+    describe('Now it\'s your turn. Adjust the filters yourself, and hover over circles on the chart to view detail. See what observations you can make.')
 }
 
 async function Scene1(dataHandler) {

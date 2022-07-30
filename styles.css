@@ -17,6 +17,11 @@ html, body {
     user-select: none;
 }
 
+.interactive #scatterplot,
+.interactive #parameters {
+    pointer-events: all;
+}
+
 main {
     display: flex;
     flex-grow: 1;
@@ -195,9 +200,6 @@ footer {
         font-weight: lighter;
         margin: 0 0 1rem 0;
     }
-    #scatterplot.interactive {
-        pointer-events: all;
-    }
 
 .annotation {
     background: var(--target-color);
@@ -302,9 +304,6 @@ footer {
     pointer-events: none;
     width: 26%;
 }
-    #parameters.interactive {
-        pointer-events: all;
-    }
     #parameters div {
         display: flex;
         align-items: center;
@@ -372,10 +371,10 @@ footer {
         outline: none;
         position: relative;
         transition: opacity .2s;
-        width: 50%;
+        width: 75%;
     }
         #parameters input[type=range]:after {
-            content: attr(data-text-before) attr(data-value) attr(data-text-after);
+            /* content: attr(data-text-before) attr(data-value) attr(data-text-after); */
             color: var(--light-color);
             left: calc(100% + 1em);
             position: absolute;
