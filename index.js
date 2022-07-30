@@ -11,42 +11,49 @@ const defaultParameters = [
         title: 'Status',
         type: 'select',
         value: 'I am a developer by profession',
+        default: 'I am a developer by profession',
         field: 'MainBranch',
     },
     {
         title: 'Employment',
         type: 'select',
         value: 'Employed full-time',
+        default: 'Employed full-time',
         field: 'Employment',
     },
     {
         title: 'Country',
         type: 'select',
         value: 'United States of America',
+        default: 'United States of America',
         field: 'Country',
     },
     {
         title: 'Education',
         type: 'select',
         value: null,
+        default: null,
         field: 'EdLevel',
     },
     {
         title: 'Age',
         type: 'select',
         value: null,
+        default: null,
         field: 'Age',
     },
     {
         title: 'Women Only',
         type: 'toggle',
-        value: false,
+        value: true,
+        default: true,
         field: 'IsWoman'
     },
     {
         title: 'Compensation',
         type: 'range',
         value: 1000000, // Hard coded ceiling
+        default: 1000000, // Hard coded ceiling
         field: 'ConvertedCompYearly',
         textBefore: 'Up to $',
         textAfter: ' USD'
@@ -55,6 +62,7 @@ const defaultParameters = [
         title: 'Experience',
         type: 'range',
         value: null,
+        default: null,
         field: 'YearsCodePro',
         textBefore: 'Up to ',
         textAfter: ' years'
@@ -73,10 +81,10 @@ function formatNumber(num) {
 window.addEventListener('DOMContentLoaded', async() => {
     const dataHandler = await new DataHandler().load('./data.csv')
     const visualizations = []
-    const parameters = await dataHandler.createParameterElements(
+    await dataHandler.createParameterElements(
         '#parameters',
         defaultParameters,
-        () => visualizations.forEach(v => v.refresh())
+        (ms) => visualizations.forEach(v => v.refresh(ms))
     )
 
     visualizations.push(
@@ -147,7 +155,6 @@ window.addEventListener('DOMContentLoaded', async() => {
         new Plotter({
             dataAccessor: () => dataHandler.Data,
             keyAccessor: d => d.ResponseId,
-            durationAccessor: () => duration,
             refreshCallback: populateScatterplot,
             parentNode: d3.select('#scatterplot'),
             cssClass: 'scatterplot',
@@ -159,12 +166,13 @@ window.addEventListener('DOMContentLoaded', async() => {
     )
 
     await IntroScene()
-    await ShowScene()
+    await ShowScene(dataHandler)
 })
 
 function describe(text, delayMs) {
     d3.select('#description')
         .text(text)
+        .classed('hidden', false)
     d3.select('footer')
         .style('--pause', `${delayMs/1000}s`)
         .classed('active', true)
@@ -180,25 +188,6 @@ async function annotate(text, cssClass, cssIndex, delayMs) {
             .text(text)
         .transition()
             .style('margin', '0')
-    await new Promise(r => setTimeout(r, delayMs))
-}
-
-function resetParameter({
-    status,
-    employment,
-    country,
-    education,
-    age,
-    womenOnly,
-    compensation,
-    experience
-}) {
-    
-
-
-    const el = document.getElementById(`parameter-${name}`)
-    el.value = value || el.getAttribute('max') || ''
-    el.dispatchEvent(new Event('change'))
     await new Promise(r => setTimeout(r, delayMs))
 }
 
@@ -226,9 +215,9 @@ async function IntroScene() {
     })
 }
 
-async function ShowScene() {
+async function ShowScene(dataHandler) {
     const scenes = [
-        //Scene1,
+        Scene1,
         Scene2,
         Scene4,
         Scene5,
@@ -248,9 +237,9 @@ async function ShowScene() {
         d3.select('#replayButton')
             .text(`Replay Slide ${i+1}`)
         d3.select('#nextButton')
-            .text(`Continue to Slide ${i+2}`)
+            .text(i == scenes.length-1 ? 'Done' : `Continue to Slide ${i+2}`)
 
-        await scenes[i]()
+        await scenes[i](dataHandler)
 
         d3.select('footer')
             .classed('active', false)
@@ -262,9 +251,6 @@ async function ShowScene() {
         )
         d3.selectAll('.annotation').remove()
 
-        description.text('')
-        description.classed('hidden', false)
-
         if (cmd == 'next')
             i++
         else if (cmd == 'back')
@@ -275,24 +261,15 @@ async function ShowScene() {
         .classed('interactive', true)
 }
 
-async function Scene1() {
-    describe('Scene 1: What is the presence and average compensation of women software developers (full-time) in the US?')
+async function Scene1(dataHandler) {
+    dataHandler.resetParameters()
+    d3.select('.scatterplot circle').attr('transform', 'translate(0 -200)')
+    describe('Scene 1: What is the presence and average compensation of women software developers (full-time) in the US?', 21000)
 
-    duration = 0
-    await setParameter('Age', null, 0)
-    await setParameter('ConvertedCompYearly', null, 0)
-    await setParameter('YearsCodePro', null, 0)
-    d3.selectAll('.scatterplot circle')
-        .attr('transform', 'translate(0 -200)') // TODO: Un-hard code.
-
-    duration = 5000
-    const isWoman = document.getElementById('parameter-IsWoman')
-    isWoman.checked = false
-    isWoman.click()
+    dataHandler.setParameter('IsWoman', true, 5000)
     await pause(5000)
-    isWoman.click()
+    dataHandler.setParameter('IsWoman', false, 6000)
     await pause(6000)
-    duration = 1500
 
     await annotate(
         'Representing just 7% of full-time developer respondents in the US, women are outnumbered 13:1 by their peers (men, non-binary, etc.)', 
@@ -314,39 +291,28 @@ async function Scene1() {
     )
 }
 
-async function Scene2() {
-    describe('Scene 2: Can the pay gap be explained by differences in years of experience? How are women paid in the earliest age group (18-24)?')
+async function Scene2(dataHandler) {
+    dataHandler.resetParameters({IsWoman: false})
+    dataHandler.refreshData(0)
+    describe('Scene 2: Can the pay gap be explained by differences in years of experience? Let\'s see how people in the earliest age group (18-24) are paid.')
 
-    duration = 3000
     await annotate(
-        'To answer the question below, we filter to the 18-24 age group',
+        'To answer this question, we filter to the 18-24 age group, and we adjust compensation and experience ranges to remove outliers',
         'parameter',
         4,
-        1000
+        500
     )
-    duration = 5000
-    await setParameter('Age', '18-24 years old', 6000)
-    duration = 1500
+    dataHandler.setParameter('Age', '18-24 years old', 6000)
+    pause(6000)
+    dataHandler.setParameter('ConvertedCompYearly', 300000, 2000)
+    pause(2000)
+    dataHandler.setParameter('YearsCodePro', 8, 3000)
+    pause(3000)
 
     await annotate(
-        'We adjust the compensation and experience ranges to remove outliers that skew the data',
-        'parameter',
-        6.5,
-        2000
-    )
-    await setParameter('ConvertedCompYearly', 300000, 1500)
-    await setParameter('YearsCodePro', 8, 3000)
-
-    await annotate(
-        'Notice that average pay in the 18-24 age group is basically equal for women and their peers: $93K vs. $94K',
+        'Pay in this earlier career group is nearly equal for women and their peers, supporting the idea that the pay gap is due to average experience differences',
         'ban',
         1,
-        3000
-    )
-    await annotate(
-        'And women still earn more per year of professional experience',
-        'ban',
-        3,
         3000
     )
 }
@@ -429,10 +395,4 @@ async function Scene6() {
         top: '50%',
         width: '35rem'
     }, 5000)
-}
-
-class SceneManager {
-    constructor(parameters) {
-        this.parameters = parameters
-    }
 }

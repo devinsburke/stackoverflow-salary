@@ -11,10 +11,9 @@ class Plotter {
         ConvertedCompYearlyRaw: 'Compensation'
     })
 
-    constructor({dataAccessor, keyAccessor, durationAccessor, parentNode, cssClass, title, layout, x, y, refreshCallback}) {
+    constructor({dataAccessor, keyAccessor, parentNode, cssClass, title, layout, x, y, refreshCallback}) {
         this.dataAccessor = dataAccessor
         this.keyAccessor = keyAccessor
-        this.durationAccessor = durationAccessor
         this.layout = layout
         this.x = x
         this.y = y
@@ -78,7 +77,7 @@ class Plotter {
             .text(d => d[1])
         dater.insert('dd')
 
-        this.refresh = () => refreshCallback(this)
+        this.refresh = (duration) => refreshCallback(this, duration)
     }
 }
 
@@ -92,24 +91,24 @@ class Axis {
     }
 }
 
-function populateScatterplot({dataAccessor, durationAccessor, keyAccessor, x, y, plot, tooltip}) {
+function populateScatterplot({dataAccessor, keyAccessor, x, y, plot, tooltip}, duration = 2000) {
     const contextData = dataAccessor().filter(d => d[x.field] && d[y.field])
     x.scale.domain([0, d3.max(contextData, d => d[x.field])])
     y.scale.domain([0, d3.max(contextData, d => d[y.field])])
 
-    x.axisGroup
-        .transition()
-        .duration(durationAccessor()?500:0) // TODO: Don't hardcode.
-        .call(x.axis)
-    y.axisGroup
-        .transition()
-        .duration(durationAccessor()?500:0) // TODO: Don't hardcode.
-        .call(y.axis)
+    lifecycle = x.axisGroup
+    if (duration)
+        lifecycle = lifecycle.transition().duration(500)
+    lifecycle.call(x.axis)
+    lifecycle = y.axisGroup
+    if (duration)
+        lifecycle = lifecycle.transition().duration(500) // TODO: Don't hardcode.
+    lifecycle.call(y.axis)
 
     const dater = plot
         .selectAll('circle')
         .data(contextData, keyAccessor)
-    dater
+    lifecycle = dater
         .enter()
             .append('circle')
             .attr('transform', 'translate(0 -200)') // TODO: Un-hard code.
@@ -125,14 +124,18 @@ function populateScatterplot({dataAccessor, durationAccessor, keyAccessor, x, y,
             })
             .on('mouseout', () => tooltip.style('visibility', 'hidden'))
         .merge(dater)
+    if (duration)
+        lifecycle = lifecycle
             .transition()
-                .duration(Math.floor(Math.random() * durationAccessor()))
-                .attr('transform', '')
-                .attr('cx', d => x.scale(d[x.field]))
-                .attr('cy', d => y.scale(d[y.field]))
-    dater
-        .exit()
+            .duration(() => Math.floor(Math.random() * duration))
+    lifecycle
+        .attr('transform', '')
+        .attr('cx', d => x.scale(d[x.field]))
+        .attr('cy', d => y.scale(d[y.field]))
+    lifecycle = dater.exit()
+    if (duration)
+        lifecycle = lifecycle
             .transition()
-            .duration(Math.floor(Math.random() * durationAccessor()))
-            .attr('transform', 'translate(0 -200)') // TODO: Un-hard code.
+            .duration(() => Math.floor(Math.random() * duration))
+    lifecycle.attr('transform', 'translate(0 -200)') // TODO: Un-hard code.
 }

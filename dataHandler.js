@@ -14,6 +14,30 @@ class DataHandler {
         return this
     }
 
+    resetParameters(overrides = {}) {
+        for (const param of this.parameters)
+            this.#setParameter(param, overrides[param.field])
+    }
+
+    setParameter(field, value, ms) {
+        for (const param of this.parameters) {
+            if (param.field == field) {
+                this.#setParameter(param, value)
+                break
+            }
+        }
+        this.refreshData(ms)
+    }
+
+    #setParameter(parameter, value) {
+        const el = document.getElementById(`parameter-${parameter.field}`)
+        parameter.value = value ?? parameter.default
+        if (el.getAttribute('type') == 'checkbox')
+            el.checked = parameter.value
+        else
+            el.value = parameter.value
+    }
+
     async createParameterElements(container, parameters, onChangeCallback) {
         this.container = container
         this.parameters = parameters
@@ -35,7 +59,7 @@ class DataHandler {
                     .property('checked', p.value)
                     .on('change', async e => {
                         p.value = e.currentTarget.checked || null
-                        this.#refreshData()
+                        this.refreshData()
                     })
                 label.append('span')
             } else if (p.type == 'range') {
@@ -53,7 +77,7 @@ class DataHandler {
                         .on('change', e => {
                             p.value = parseInt(e.currentTarget.value) || null
                             e.currentTarget.setAttribute('data-value', formatNumber(p.value))
-                            this.#refreshData()
+                            this.refreshData()
                         })
             } else if (p.type == 'select') {
                 const distinct = ['', ...new Set(this.#data.map(d => d[p.field]))]
@@ -62,7 +86,7 @@ class DataHandler {
                         .attr('id', 'parameter-' + p.field)
                         .on('change', async e => {
                             p.value = e.currentTarget.value || null
-                            this.#refreshData()
+                            this.refreshData()
                         })
                         .selectAll()
                         .data(distinct)
@@ -71,16 +95,15 @@ class DataHandler {
                             .property('selected', d => d == p.value)
             }
         }
-        this.#refreshData()
     }
 
-    #refreshData() {
+    refreshData(duration = 2000) {
         this.Data = this.#data.filter(d => this.parameters.every(p => {
             if (p.type == 'range')
                 return !p.value || d[p.field] <= p.value
             return !p.value || d[p.field] == p.value
         }))
-        this.onChange()
+        this.onChange(duration)
     }
 
     static #cleanRow(row) {
